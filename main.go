@@ -14,7 +14,8 @@ func main() {
 	temp.Id = 123
 	router := mux.NewRouter()
 
-	router.HandleFunc("/books", hb.GetAllBooks).Methods(http.MethodGet)
+	router.HandleFunc("/books", hb.GetAllBooks).Methods(http.MethodGet) //get api
+	router.HandleFunc("/addbooks", hb.AddBook).Methods(http.MethodPost) //post api
 	// router.HandleFunc("/books", func(w http.ResponseWriter, r *http.Request) {
 	// 	json.NewEncoder(w).Encode("Hello World")
 	// })
