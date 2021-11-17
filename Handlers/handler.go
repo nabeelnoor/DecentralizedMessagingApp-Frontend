@@ -137,3 +137,36 @@ func UpdateBook(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 }
+
+func DeleteBook(w http.ResponseWriter, r *http.Request) {
+	// Read the dynamic id parameter
+	var BookID int
+	fmt.Println(r.URL)
+	allParams := r.URL.Query()
+	for k, v := range allParams {
+		fmt.Println(k, "=>", v)                                         //print key value pair of all params
+		appendV := strings.Join(v, "")                                  //append slice of string to single string
+		fmt.Println("after converting string slice to string", appendV) //print
+		finalOutput, _ := strconv.Atoi(appendV)                         //convert string to number
+		if k == "bookID" {
+			BookID = finalOutput
+		}
+
+		if finalOutput == 23 { //just for debuggin
+			fmt.Println("holla")
+		}
+	}
+
+	// Iterate over all the mock Books
+	for index, book := range mockbk.Books {
+		if book.Id == BookID {
+			// Delete book and send a response if the book Id matches dynamic Id
+			mockbk.Books = append(mockbk.Books[:index], mockbk.Books[index+1:]...)
+
+			w.Header().Add("Content-Type", "application/json")
+			w.WriteHeader(http.StatusOK)
+			json.NewEncoder(w).Encode("Deleted")
+			break
+		}
+	}
+}
