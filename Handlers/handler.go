@@ -64,6 +64,7 @@ func GetBook(w http.ResponseWriter, r *http.Request) {
 
 func GetBook2(w http.ResponseWriter, r *http.Request) {
 	// Read dynamic id parameter
+	var BookID int
 	fmt.Println(r.URL)
 	allParams := r.URL.Query()
 	for k, v := range allParams {
@@ -71,16 +72,19 @@ func GetBook2(w http.ResponseWriter, r *http.Request) {
 		appendV := strings.Join(v, "")                                  //append slice of string to single string
 		fmt.Println("after converting string slice to string", appendV) //print
 		finalOutput, _ := strconv.Atoi(appendV)                         //convert string to number
-		if finalOutput == 23 {
+		if k == "bookID" {
+			BookID = finalOutput
+		}
+
+		if finalOutput == 23 { //just for debuggin
 			fmt.Println("holla")
 		}
 	}
-	vars := mux.Vars(r)
-	id, _ := strconv.Atoi(vars["id"])
+
 	// fmt.Println(id)
 	// Iterate over all the mock books
 	for _, book := range mockbk.Books {
-		if book.Id == id {
+		if book.Id == BookID {
 			// If ids are equal send book as a response
 			w.Header().Add("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
