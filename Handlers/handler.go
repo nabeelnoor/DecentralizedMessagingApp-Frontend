@@ -94,3 +94,46 @@ func GetBook2(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 }
+
+func UpdateBook(w http.ResponseWriter, r *http.Request) {
+	// Read dynamic id parameter
+	var BookID int
+	fmt.Println(r.URL)
+	allParams := r.URL.Query()
+	for k, v := range allParams {
+		fmt.Println(k, "=>", v)                                         //print key value pair of all params
+		appendV := strings.Join(v, "")                                  //append slice of string to single string
+		fmt.Println("after converting string slice to string", appendV) //print
+		finalOutput, _ := strconv.Atoi(appendV)                         //convert string to number
+		if k == "bookID" {
+			BookID = finalOutput
+		}
+
+		if finalOutput == 23 { //just for debuggin
+			fmt.Println("holla")
+		}
+	}
+
+	defer r.Body.Close()
+	body, _ := ioutil.ReadAll(r.Body)
+
+	var updatedBook bk.Book
+	json.Unmarshal(body, &updatedBook)
+
+	// Iterate over all the mock Books
+	for index, book := range mockbk.Books {
+		if book.Id == BookID {
+			// Update and send a response when book Id matches dynamic Id
+			book.Title = updatedBook.Title
+			book.Author = updatedBook.Author
+			book.Desc = updatedBook.Desc
+
+			mockbk.Books[index] = book
+			w.Header().Add("Content-Type", "application/json")
+			w.WriteHeader(http.StatusOK)
+
+			json.NewEncoder(w).Encode("Updated")
+			break
+		}
+	}
+}
