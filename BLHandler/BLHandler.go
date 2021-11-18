@@ -40,6 +40,9 @@ func GetBlockChain(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(BLChain)
 	}
 
+	//depopulate
+	BLChain = nil
+
 	// w.Header().Add("Content-Type", "application/json")
 }
 
