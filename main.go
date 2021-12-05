@@ -12,16 +12,6 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// func peerSender() {
-// 	time.Sleep(8 * time.Second)
-// 	conn, err := net.Dial("tcp", ":4000/bl")
-// 	if err != nil {
-// 		log.Println("Error:", err)
-// 	}
-// 	log.Println(conn)
-// 	log.Println("main3")
-// }
-
 func Recv() {
 	temp := "Send from Rest to Test"
 	// log.Println("main2")
@@ -43,7 +33,7 @@ func Recv() {
 
 func Send() {
 	buf2 := make([]byte, 4096)
-	conn, _ := net.Dial("tcp", "192.168.0.114:6001")
+	conn, _ := net.Dial("tcp", ":6001")
 	conn.Read(buf2)
 	// log.Println(err)
 	log.Println("Message:", string(buf2))
@@ -85,7 +75,7 @@ func main() {
 
 	log.Println("API is running!")
 	go Controller()
-	http.ListenAndServe(":4000", router)
+	http.ListenAndServe(":4000", router) //created for handling of rest apis
 	log.Println("API is closed!")
 }
 

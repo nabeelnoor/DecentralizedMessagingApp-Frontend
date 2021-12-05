@@ -13,22 +13,25 @@ import (
 	"strings"
 
 	"github.com/gorilla/mux"
-	a2 "github.com/nabeelnoor/assignment02IBC"
+
+	dl "Rest/pk/BLogic"
+	ds "Rest/pk/DS"
+	// a2 "github.com/nabeelnoor/assignment02IBC"
 	// "github.com/karanpratapsingh/tutorials/go/crud/pkg/mocks"
 )
 
-var BLChain *a2.Block
+var BLChain *ds.Block
 
-func populate(chainHead *a2.Block) *a2.Block {
-	chainHead = a2.PremineChain(chainHead, 2)
-	SatoshiToAlice := []a2.BlockData{{Title: "SatoshiToAlice", Sender: "Satoshi", Receiver: "Alice", Amount: 50}, {Title: "ALice2Bob", Sender: "Alice", Receiver: "Bob", Amount: 20}}
-	chainHead = a2.InsertBlock(SatoshiToAlice, chainHead)
+func populate(chainHead *ds.Block) *ds.Block {
+	chainHead = dl.TestData(BLChain)
+	// SatoshiToAlice := []a2.BlockData{{Title: "SatoshiToAlice", Sender: "Satoshi", Receiver: "Alice", Amount: 50}, {Title: "ALice2Bob", Sender: "Alice", Receiver: "Bob", Amount: 20}}
+	// chainHead = a2.InsertBlock(SatoshiToAlice, chainHead)
 	return chainHead
 }
 
 func GetBlockChain(w http.ResponseWriter, r *http.Request) {
 	BLChain = populate(BLChain)
-	a2.ListBlocks(BLChain)
+	//a2.ListBlocks(BLChain) //for printing and debuging purpose
 
 	w.Header().Set("Access-Control-Allow-Origin", "*") //setting cors policy to allow by all
 	if r.Method == "OPTIONS" {                         //setting cors policy to allow by all
@@ -52,6 +55,7 @@ func Greet(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode("Welcome to Website")
 }
 
+// -------------------------------------------------------------------------below here is sample of books.
 func GetAllBooks(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
