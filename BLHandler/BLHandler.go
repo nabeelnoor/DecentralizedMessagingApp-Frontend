@@ -13,6 +13,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/gorilla/mux"
 
@@ -38,9 +39,11 @@ func StoreIdentity(w http.ResponseWriter, r *http.Request) {
 
 	var currentKeyPair keyPair
 	json.Unmarshal(body, &currentKeyPair)
-	//till here currentKeyPair is made.
-	temp := StringifyMsgBlock("testContent", "testSender", "testRecv")
-	ParseMsgBlock(temp)
+	//till here currentKeyPair contain public and private.
+
+	currBlock := prepareBlock("", currentKeyPair.PublicKey.N.String(), currentKeyPair.PublicKey.N.String(), true)
+	//append this block to the block chain
+
 	w.Header().Set("Access-Control-Allow-Origin", "*") //setting cors policy to allow by all
 	if r.Method == "OPTIONS" {                         //setting cors policy to allow by all
 		w.Header().Set("Access-Control-Allow-Headers", "Authorization") // You can add more headers here if needed   //setting cors policy to allow by all
@@ -53,7 +56,33 @@ func StoreIdentity(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func StringifyMsgBlock(_content string, _sender string, _recv string) string {
+func stringifyPrivateKey(keys keyPair) string { //take key pair and stringify and return private key
+	return ""
+}
+
+func stringifyPublicKey(keys keyPair) string {
+	return ""
+}
+
+func parsePrivateKey(key string) {
+	//return priv
+}
+
+func parsePublicKey(key string) {
+	//return public
+}
+
+func encryptMsg(msg string, keys keyPair) string {
+	retVal := ec.RSA_Encrypt(msg, keys.PrivateKey.PublicKey)
+	return retVal
+}
+
+func prepareBlock(_hashData string, _sender string, _recv string, _controller bool) ds.Block {
+	retVal := ds.Block{DataHash: _hashData, Sender: _sender, Recv: _recv, TimeStamp: time.Now().String(), IdentityBlock: _controller}
+	return retVal
+}
+
+func stringifyMsgBlock(_content string, _sender string, _recv string) string {
 	currMsg := ds.Message{Content: _content, Sender: _sender, Recv: _recv} //till here msg block is ready
 	byteData, err := json.Marshal(currMsg)                                 //convert DS to byte
 	if err != nil {
@@ -69,7 +98,7 @@ func StringifyMsgBlock(_content string, _sender string, _recv string) string {
 	// return ""
 }
 
-func ParseMsgBlock(inputString string) ds.Message {
+func parseMsgBlock(inputString string) ds.Message {
 	ByteData := []byte(inputString)       //convert from string to byte
 	var tempStruct ds.Message             //make data structure
 	json.Unmarshal(ByteData, &tempStruct) //tempStruct is now contain value.

@@ -42,7 +42,7 @@ func VerifyChain(chainHead *ds.Block) bool {
 	}
 }
 
-func InsertBlock(blockData ds.Message, chainHead *ds.Block) *ds.Block {
+func InsertBlock(blockData ds.Block, chainHead *ds.Block) *ds.Block {
 	//call function to calculate hash ds.Message ,encrypt with priavte key of sender and public key of recv
 	//need function to get current sender,recv or parameter
 	var currentHashData string = "hashofData"
