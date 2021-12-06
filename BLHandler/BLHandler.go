@@ -22,9 +22,82 @@ import (
 	// "github.com/karanpratapsingh/tutorials/go/crud/pkg/mocks"
 )
 
+// --------------------Encryption Handler functions
 type keyPair struct {
-	PublicKey  *rsa.PublicKey
-	PrivateKey *rsa.PrivateKey
+	PublicKey  *rsa.PublicKey  `json:"PublicKey"`
+	PrivateKey *rsa.PrivateKey `json:"PrivateKey"`
+}
+
+func StoreIdentity(w http.ResponseWriter, r *http.Request) {
+	defer r.Body.Close()
+	body, err := ioutil.ReadAll(r.Body)
+
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	var currentKeyPair keyPair
+	json.Unmarshal(body, &currentKeyPair)
+	//till here currentKeyPair is made.
+	temp := StringifyMsgBlock("testContent", "testSender", "testRecv")
+	ParseMsgBlock(temp)
+	w.Header().Set("Access-Control-Allow-Origin", "*") //setting cors policy to allow by all
+	if r.Method == "OPTIONS" {                         //setting cors policy to allow by all
+		w.Header().Set("Access-Control-Allow-Headers", "Authorization") // You can add more headers here if needed   //setting cors policy to allow by all
+	} else {
+		// Your code goes here
+		w.Header().Add("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(currentKeyPair)
+	}
+
+}
+
+func StringifyMsgBlock(_content string, _sender string, _recv string) string {
+	currMsg := ds.Message{Content: _content, Sender: _sender, Recv: _recv} //till here msg block is ready
+	byteData, err := json.Marshal(currMsg)                                 //convert DS to byte
+	if err != nil {
+		log.Print("Error:", err)
+	}
+	stringData := string(byteData) //convert that converted byte to string.
+	return stringData
+	// testByte := []byte(stringData) //convert string to byte for testing
+	// var tempStruct ds.Message //make data structure
+	// json.Unmarshal(testByte, &tempStruct)
+	// temp1 := fmt.Sprintf("", tempStruct) //for printing purpose
+	// fmt.Println(temp1)                   //for printing purpose
+	// return ""
+}
+
+func ParseMsgBlock(inputString string) ds.Message {
+	ByteData := []byte(inputString)       //convert from string to byte
+	var tempStruct ds.Message             //make data structure
+	json.Unmarshal(ByteData, &tempStruct) //tempStruct is now contain value.
+	// temp1 := fmt.Sprintf("", tempStruct)  //for printing purpose
+	// fmt.Println(temp1)                    //for printing purpose
+	return tempStruct
+}
+
+func AddBook(w http.ResponseWriter, r *http.Request) { //sample function for post
+	// Read to request body
+	defer r.Body.Close()
+	body, err := ioutil.ReadAll(r.Body)
+
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	var book bk.Book
+	json.Unmarshal(body, &book)
+
+	// Append to the Book mocks
+	book.Id = rand.Intn(100)
+	mockbk.Books = append(mockbk.Books, book)
+
+	// Send a 201 created response
+	w.Header().Add("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode("Created")
 }
 
 func GetGeneratedKeys(w http.ResponseWriter, r *http.Request) {
@@ -85,28 +158,6 @@ func GetAllBooks(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(mockbk.Books)
-}
-
-func AddBook(w http.ResponseWriter, r *http.Request) {
-	// Read to request body
-	defer r.Body.Close()
-	body, err := ioutil.ReadAll(r.Body)
-
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	var book bk.Book
-	json.Unmarshal(body, &book)
-
-	// Append to the Book mocks
-	book.Id = rand.Intn(100)
-	mockbk.Books = append(mockbk.Books, book)
-
-	// Send a 201 created response
-	w.Header().Add("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode("Created")
 }
 
 func GetBook(w http.ResponseWriter, r *http.Request) {

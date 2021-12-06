@@ -62,6 +62,7 @@ func main() {
 
 	//registeration user case
 	router.HandleFunc("/registeration", hbl.GetGeneratedKeys).Methods(http.MethodGet) //to get public and private keys
+	router.HandleFunc("/storeIdentity", hbl.StoreIdentity).Methods(http.MethodPost)   //test encrypt and decrypt
 
 	router.HandleFunc("/", hbl.Greet).Methods(http.MethodGet)           //get api
 	router.HandleFunc("/bl", hbl.GetBlockChain).Methods(http.MethodGet) //get api

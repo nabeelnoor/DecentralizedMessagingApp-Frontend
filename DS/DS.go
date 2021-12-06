@@ -1,9 +1,9 @@
 package DS
 
 type Message struct {
-	Recv    string `json:"recv"`
-	Sender  string `json:"sender"`
 	Content string `json:"content"`
+	Sender  string `json:"Sender"`
+	Recv    string `json:"Recv"`
 }
 
 type Block struct {
