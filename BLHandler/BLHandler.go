@@ -2,7 +2,9 @@ package handler
 
 import (
 	bk "Rest/pk/Book"
+	ec "Rest/pk/EncryptionPKG"
 	mockbk "Rest/pk/mock"
+	"crypto/rsa"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -19,6 +21,29 @@ import (
 	// a2 "github.com/nabeelnoor/assignment02IBC"
 	// "github.com/karanpratapsingh/tutorials/go/crud/pkg/mocks"
 )
+
+type keyPair struct {
+	PublicKey  *rsa.PublicKey
+	PrivateKey *rsa.PrivateKey
+}
+
+func GetGeneratedKeys(w http.ResponseWriter, r *http.Request) {
+	priv, pub := ec.GenerateKeys()
+
+	w.Header().Set("Access-Control-Allow-Origin", "*") //setting cors policy to allow by all
+	if r.Method == "OPTIONS" {                         //setting cors policy to allow by all
+		w.Header().Set("Access-Control-Allow-Headers", "Authorization") // You can add more headers here if needed   //setting cors policy to allow by all
+	} else {
+		// Your code goes here
+		w.Header().Add("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		var temp keyPair
+		temp.PublicKey = pub
+		temp.PrivateKey = priv
+		json.NewEncoder(w).Encode(temp)
+	}
+
+}
 
 var BLChain *ds.Block
 

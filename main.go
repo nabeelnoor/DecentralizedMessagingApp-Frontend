@@ -60,6 +60,9 @@ func main() {
 	temp.Id = 123
 	router := mux.NewRouter()
 
+	//registeration user case
+	router.HandleFunc("/registeration", hbl.GetGeneratedKeys).Methods(http.MethodGet) //to get public and private keys
+
 	router.HandleFunc("/", hbl.Greet).Methods(http.MethodGet)           //get api
 	router.HandleFunc("/bl", hbl.GetBlockChain).Methods(http.MethodGet) //get api
 	router.HandleFunc("/books", hb.GetAllBooks).Methods(http.MethodGet) //get api
