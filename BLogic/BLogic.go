@@ -63,12 +63,15 @@ func InsertBlock(blockData ds.Block, chainHead *ds.Block) *ds.Block {
 	}
 }
 
+//contain error resolved it.
 func TestData(handle *ds.Block) *ds.Block {
-	tempMsg := ds.Message{Sender: "Sender", Recv: "Recv", Content: "Content"}
-	handle = InsertBlock(tempMsg, handle)
-	handle = InsertBlock(tempMsg, handle)
-	handle = InsertBlock(tempMsg, handle)
-	return handle
+	// tempMsg := ds.Message{Sender: "Sender", Recv: "Recv", Content: "Content"}
+	// handle = InsertBlock(tempMsg, handle)
+	// handle = InsertBlock(tempMsg, handle)
+	// handle = InsertBlock(tempMsg, handle)
+	// return handle
+	var handle2 ds.Block
+	return &handle2
 }
 
 func ListBlocks(chainHead *ds.Block) {
