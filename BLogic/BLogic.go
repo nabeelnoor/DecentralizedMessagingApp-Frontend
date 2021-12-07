@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-//calculate string of Block except currentHash.
+//1.calculate string of Block except currentHash.
 func CalculateHash(inputBlock *ds.Block) string {
 	transaction_To_String := fmt.Sprintf("%v", inputBlock.DataHash)
 	transaction_To_String += fmt.Sprintf("%v", inputBlock.PrevHash)
@@ -15,14 +15,14 @@ func CalculateHash(inputBlock *ds.Block) string {
 	transaction_To_String += fmt.Sprintf("%v", inputBlock.Recv)
 	transaction_To_String += fmt.Sprintf("%v", inputBlock.Sender)
 	transaction_To_String += fmt.Sprintf("%v", inputBlock.TimeStamp)
+	transaction_To_String += fmt.Sprintf("%v", inputBlock.IdentityBlock)
 	var calculatedHash = fmt.Sprintf("%x\n", sha256.Sum256([]byte(transaction_To_String)))
 	return calculatedHash
 }
 
-//verify block chain from new to gensis block
+//2.verify block chain from new to gensis block
 func VerifyChain(chainHead *ds.Block) bool {
 	compromisedFlag := false
-
 	var currPtr = chainHead
 	for currPtr != nil { //for block iteration
 		var calculatedHashOfCurrentBlockToVerify = CalculateHash(currPtr)
@@ -42,23 +42,25 @@ func VerifyChain(chainHead *ds.Block) bool {
 	}
 }
 
-func InsertBlock(blockData ds.Block, chainHead *ds.Block) *ds.Block {
-	//call function to calculate hash ds.Message ,encrypt with priavte key of sender and public key of recv
-	//need function to get current sender,recv or parameter
-	var currentHashData string = "hashofData"
-	var currentSender string = "currentSender"
-	var currentRecv string = "currentRecv"
-	//preparing block data to be ready to insert in blockChain
+//3.prepare block ,leaves 3 value {currentHash,prevHash and prevPointer}
+func prepareBlock(_hashData string, _sender string, _recv string, _controller bool) ds.Block {
+	retVal := ds.Block{DataHash: _hashData, Sender: _sender, Recv: _recv, TimeStamp: time.Now().String(), IdentityBlock: _controller}
+	return retVal
+}
 
+//4.takes ds.Block and chainHead and append that block to blockChain pointed by chainHead,setting pointer and hash for ds.block based on the block position
+func InsertBlock(blockData ds.Block, chainHead *ds.Block) *ds.Block {
 	if chainHead == nil { //chainhead is nill so create new block and chain head pointed to this newly created block
-		var current_Block_To_Insert = ds.Block{DataHash: currentHashData, PrevHash: "", PrevPointer: nil, Sender: currentSender, Recv: currentRecv, TimeStamp: time.Now().String()}
-		current_Block_To_Insert.CurrentHash = CalculateHash(&current_Block_To_Insert)
-		chainHead = &current_Block_To_Insert
+		blockData.PrevHash = ""
+		blockData.PrevPointer = nil
+		blockData.CurrentHash = CalculateHash(&blockData)
+		chainHead = &blockData
 		return chainHead
 	} else { //newly created block point to block which is previously pointed by chainhead and now chainhead will point to newly created block.
-		var current_Block_To_Insert = ds.Block{DataHash: currentHashData, PrevHash: chainHead.CurrentHash, PrevPointer: chainHead, Sender: currentSender, Recv: currentRecv, TimeStamp: time.Now().String()}
-		current_Block_To_Insert.CurrentHash = CalculateHash(&current_Block_To_Insert)
-		chainHead = &current_Block_To_Insert
+		blockData.PrevPointer = chainHead
+		blockData.PrevHash = chainHead.CurrentHash
+		blockData.CurrentHash = CalculateHash(&blockData)
+		chainHead = &blockData
 		return chainHead
 	}
 }
@@ -74,6 +76,7 @@ func TestData(handle *ds.Block) *ds.Block {
 	return &handle2
 }
 
+//100.For display
 func ListBlocks(chainHead *ds.Block) {
 	fmt.Println("\n\n--------------------------Listing Blocks (most recent first) ... ---------------------\n\n ")
 	var currPtr = chainHead

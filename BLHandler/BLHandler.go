@@ -13,7 +13,6 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/gorilla/mux"
 
@@ -44,16 +43,6 @@ func StoreIdentity(w http.ResponseWriter, r *http.Request) {
 	currBlock := prepareBlock("", currentKeyPair.PublicKey.N.String(), currentKeyPair.PublicKey.N.String(), true)
 	//append this block to the block chain
 
-	w.Header().Set("Access-Control-Allow-Origin", "*") //setting cors policy to allow by all
-	if r.Method == "OPTIONS" {                         //setting cors policy to allow by all
-		w.Header().Set("Access-Control-Allow-Headers", "Authorization") // You can add more headers here if needed   //setting cors policy to allow by all
-	} else {
-		// Your code goes here
-		w.Header().Add("Content-Type", "application/json")
-		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(currentKeyPair)
-	}
-
 }
 
 func stringifyPrivateKey(keys keyPair) string { //take key pair and stringify and return private key
@@ -74,11 +63,6 @@ func parsePublicKey(key string) {
 
 func encryptMsg(msg string, keys keyPair) string {
 	retVal := ec.RSA_Encrypt(msg, keys.PrivateKey.PublicKey)
-	return retVal
-}
-
-func prepareBlock(_hashData string, _sender string, _recv string, _controller bool) ds.Block {
-	retVal := ds.Block{DataHash: _hashData, Sender: _sender, Recv: _recv, TimeStamp: time.Now().String(), IdentityBlock: _controller}
 	return retVal
 }
 
