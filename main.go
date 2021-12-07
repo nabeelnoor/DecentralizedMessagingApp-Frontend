@@ -64,9 +64,9 @@ func main() {
 	router.HandleFunc("/registeration", hbl.GetGeneratedKeys).Methods(http.MethodGet) //to get public and private keys
 	//internal calls to store public key to blockChain,returns public and private key as encrypted string to user so he can share his public and private key.
 	// router.HandleFunc("/storeIdentity", hbl.StoreIdentity).Methods(http.MethodPost)   //test encrypt and decrypt
-
 	router.HandleFunc("/", hbl.Greet).Methods(http.MethodGet)           //get api
 	router.HandleFunc("/bl", hbl.GetBlockChain).Methods(http.MethodGet) //get api
+
 	router.HandleFunc("/books", hb.GetAllBooks).Methods(http.MethodGet) //get api
 	// router.HandleFunc("/books/{id}", hb.GetBook).Methods(http.MethodGet) //get book by id ,, localhost:4000/1
 	router.HandleFunc("/books/id", hb.GetBook2).Methods(http.MethodGet)        //get book by id ,another way to do it  ,e.g such as localhost:4000/books/id?val=1&val2=23

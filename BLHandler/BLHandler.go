@@ -33,12 +33,10 @@ type HashKeyPair struct {
 	PrivateKey string `json:"PrivateKey"`
 }
 
-//return generated public and private keys
+//return generated public and private keys in HashKeyPair and store public key as identity to blockChain
 func GetGeneratedKeys(w http.ResponseWriter, r *http.Request) {
 	priv, pub := ec.GenerateKeys()
 	private_public_keyStruct := StoreIdentity(keyPair{PrivateKey: priv, PublicKey: pub})
-	//function that will store to blockchain
-	//return hash form of strings.
 
 	w.Header().Set("Access-Control-Allow-Origin", "*") //setting cors policy to allow by all
 	if r.Method == "OPTIONS" {                         //setting cors policy to allow by all
@@ -51,48 +49,61 @@ func GetGeneratedKeys(w http.ResponseWriter, r *http.Request) {
 		temp.PublicKey = pub
 		temp.PrivateKey = priv
 		json.NewEncoder(w).Encode(private_public_keyStruct)
-		/*
-			{
-				public: hashString
-				private: hashString
-			}
-		*/
 	}
 
 }
 
-//use to store identity.
-func StoreIdentity(keys keyPair) string { //change its return type to hashKEyPair
-	var hashPublicKey string = ""
-	// var hashPrivateKey string=""
+//use to store identity to blockChain. (only public key)
+func StoreIdentity(keys keyPair) HashKeyPair { //change its return type to hashKEyPair
+	hashPrivateKey := EncryptStringifyPrivateKey(*keys.PrivateKey)
+	hashPublicKey := EncryptStringifyPublicKey(*keys.PublicKey)
+	retVal := HashKeyPair{PrivateKey: hashPrivateKey, PublicKey: hashPublicKey} // prepare HashKeyPair to return
 
 	preparedBlock := dl.PrepareBlock("", hashPublicKey, hashPublicKey, true)
+	dl.InsertBlock(preparedBlock, BLChain)
+
 	fmt.Println(preparedBlock)
-	//append this block to the block chain
-	return hashPublicKey
-
-}
-
-func stringifyPrivateKey(keys rsa.PrivateKey) string { //take key pair and stringify and return private key
-	return ""
-}
-
-func stringifyPublicKey(keys rsa.PublicKey) string {
-	return ""
-}
-
-func parsePrivateKey(key string) *rsa.PrivateKey {
-	//return priv
-
-}
-
-func parsePublicKey(key string) *rsa.PublicKey {
-	//return public
-}
-
-func encryptMsg(msg string, keys keyPair) string {
-	retVal := ec.RSA_Encrypt(msg, keys.PrivateKey.PublicKey)
 	return retVal
+}
+
+//take private key and return encrypted private key
+func EncryptStringifyPrivateKey(keys rsa.PrivateKey) string {
+	byteData, err := json.Marshal(keys) //encode to bytes
+	if err != nil {
+		log.Print("Error:", err)
+	}
+	stringData := string(byteData)              //convert that converted byte to string.
+	encryptedKey := ec.FixedEncrypt(stringData) //encrypt that string to hash
+	return encryptedKey
+}
+
+//take public key and return encrypted public key
+func EncryptStringifyPublicKey(keys rsa.PublicKey) string {
+	byteData, err := json.Marshal(keys) //encode to bytes
+	if err != nil {
+		log.Print("Error:", err)
+	}
+	stringData := string(byteData)              //convert that converted byte to string.
+	encryptedKey := ec.FixedEncrypt(stringData) //encrypt that string to hash
+	return encryptedKey
+}
+
+//take encrypted private key and return private key
+func DecryptParsePrivateKey(inputString string) *rsa.PrivateKey {
+	decryptedString := ec.FixedDecrypt(inputString)
+	ByteData := []byte(decryptedString) //convert from string to byte
+	var privKey rsa.PrivateKey          //make data structure
+	json.Unmarshal(ByteData, &privKey)  //tempStruct is now contain value.
+	return &privKey
+}
+
+//take encrytped public key and return public key
+func DecryptParsePublicKey(inputString string) *rsa.PublicKey {
+	decryptedString := ec.FixedDecrypt(inputString)
+	ByteData := []byte(decryptedString) //convert from string to byte
+	var pubKey rsa.PublicKey            //make data structure
+	json.Unmarshal(ByteData, &pubKey)   //tempStruct is now contain value.
+	return &pubKey
 }
 
 //return stringify version of msg block
@@ -122,6 +133,33 @@ func parseMsgBlock(inputString string) ds.Message {
 	return tempStruct
 }
 
+// ----------------------------------------Just for the display of the blockchain
+var BLChain *ds.Block
+
+func GetBlockChain(w http.ResponseWriter, r *http.Request) {
+	dl.ListBlocks(BLChain)
+
+	w.Header().Set("Access-Control-Allow-Origin", "*") //setting cors policy to allow by all
+	if r.Method == "OPTIONS" {                         //setting cors policy to allow by all
+		w.Header().Set("Access-Control-Allow-Headers", "Authorization") // You can add more headers here if needed   //setting cors policy to allow by all
+	} else {
+		// Your code goes here
+		w.Header().Add("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(BLChain)
+	}
+
+	// //depopulate
+	// BLChain = nil
+}
+
+func Greet(w http.ResponseWriter, r *http.Request) {
+	w.Header().Add("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode("Welcome to Website")
+}
+
+// -------------------------------------------------------------------------below here is sample of books.
 func AddBook(w http.ResponseWriter, r *http.Request) { //sample function for post
 	// Read to request body
 	defer r.Body.Close()
@@ -144,43 +182,6 @@ func AddBook(w http.ResponseWriter, r *http.Request) { //sample function for pos
 	json.NewEncoder(w).Encode("Created")
 }
 
-// ----------------------------------------Just for the display of the blockchain
-var BLChain *ds.Block
-
-func populate(chainHead *ds.Block) *ds.Block {
-	chainHead = dl.TestData(BLChain)
-	// SatoshiToAlice := []a2.BlockData{{Title: "SatoshiToAlice", Sender: "Satoshi", Receiver: "Alice", Amount: 50}, {Title: "ALice2Bob", Sender: "Alice", Receiver: "Bob", Amount: 20}}
-	// chainHead = a2.InsertBlock(SatoshiToAlice, chainHead)
-	return chainHead
-}
-
-func GetBlockChain(w http.ResponseWriter, r *http.Request) {
-	BLChain = populate(BLChain)
-	//a2.ListBlocks(BLChain) //for printing and debuging purpose
-
-	w.Header().Set("Access-Control-Allow-Origin", "*") //setting cors policy to allow by all
-	if r.Method == "OPTIONS" {                         //setting cors policy to allow by all
-		w.Header().Set("Access-Control-Allow-Headers", "Authorization") // You can add more headers here if needed   //setting cors policy to allow by all
-	} else {
-		// Your code goes here
-		w.Header().Add("Content-Type", "application/json")
-		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(BLChain)
-	}
-
-	//depopulate
-	BLChain = nil
-
-	// w.Header().Add("Content-Type", "application/json")
-}
-
-func Greet(w http.ResponseWriter, r *http.Request) {
-	w.Header().Add("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode("Welcome to Website")
-}
-
-// -------------------------------------------------------------------------below here is sample of books.
 func GetAllBooks(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)

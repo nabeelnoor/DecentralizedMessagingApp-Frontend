@@ -51,6 +51,7 @@ func PrepareBlock(_hashData string, _sender string, _recv string, _controller bo
 //4.takes ds.Block and chainHead and append that block to blockChain pointed by chainHead,setting pointer and hash for ds.block based on the block position
 func InsertBlock(blockData ds.Block, chainHead *ds.Block) *ds.Block {
 	if chainHead == nil { //chainhead is nill so create new block and chain head pointed to this newly created block
+		fmt.Println("inside bug")
 		blockData.PrevHash = ""
 		blockData.PrevPointer = nil
 		blockData.CurrentHash = CalculateHash(&blockData)
@@ -65,17 +66,6 @@ func InsertBlock(blockData ds.Block, chainHead *ds.Block) *ds.Block {
 	}
 }
 
-//contain error resolved it.
-func TestData(handle *ds.Block) *ds.Block {
-	// tempMsg := ds.Message{Sender: "Sender", Recv: "Recv", Content: "Content"}
-	// handle = InsertBlock(tempMsg, handle)
-	// handle = InsertBlock(tempMsg, handle)
-	// handle = InsertBlock(tempMsg, handle)
-	// return handle
-	var handle2 ds.Block
-	return &handle2
-}
-
 //100.For display
 func ListBlocks(chainHead *ds.Block) {
 	fmt.Println("\n\n--------------------------Listing Blocks (most recent first) ... ---------------------\n\n ")
@@ -84,7 +74,7 @@ func ListBlocks(chainHead *ds.Block) {
 		fmt.Println("\n-----------------Block-----------------")
 		// fmt.Println("Following are its transactions:-")
 		// DataHash,CurrentHash,PrevHash,PrevPointer,Sender,Recv,TimeStamp
-		fmt.Printf("{DataHash:%s ,CurrentHash:%s,PrevHash:%s,Sender:%s Receiver:%s,TimeStamp:%s} \n", currPtr.DataHash, currPtr.CurrentHash, currPtr.PrevHash, currPtr.Sender, currPtr.Recv, currPtr.TimeStamp)
+		fmt.Printf("{DataHash:%s ,CurrentHash:%s,PrevHash:%s,Sender:%s Receiver:%s,TimeStamp:%s,Controller:%t} \n", currPtr.DataHash, currPtr.CurrentHash, currPtr.PrevHash, currPtr.Sender, currPtr.Recv, currPtr.TimeStamp, currPtr.IdentityBlock)
 		currPtr = currPtr.PrevPointer
 	}
 	fmt.Println("--------------------------------------------------------------------------------------\n\n ")

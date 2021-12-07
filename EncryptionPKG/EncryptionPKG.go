@@ -83,12 +83,18 @@ func fixedKeys() (*rsa.PrivateKey, *rsa.PublicKey) {
 	return &privkey, &pubkey
 }
 
-func FixedEncrypt() {
-
+//return encyption from fixed algorithm
+func FixedEncrypt(Packet string) string {
+	_, pub := fixedKeys()
+	encryptedMessage := RSA_Encrypt(Packet, *pub)
+	return encryptedMessage
 }
 
-func FixedDecrypt() {
-
+//return decryption from fixed algorithm
+func FixedDecrypt(encryptedMessage string) string {
+	priv, _ := fixedKeys()
+	plainText := RSA_Decrypt(encryptedMessage, *priv)
+	return plainText
 }
 
 /*
