@@ -28,36 +28,65 @@ type keyPair struct {
 	PrivateKey *rsa.PrivateKey `json:"PrivateKey"`
 }
 
-func StoreIdentity(w http.ResponseWriter, r *http.Request) {
-	defer r.Body.Close()
-	body, err := ioutil.ReadAll(r.Body)
+type HashKeyPair struct {
+	PublicKey  string `json:"PublicKey"`
+	PrivateKey string `json:"PrivateKey"`
+}
 
-	if err != nil {
-		log.Fatalln(err)
+//return generated public and private keys
+func GetGeneratedKeys(w http.ResponseWriter, r *http.Request) {
+	priv, pub := ec.GenerateKeys()
+	private_public_keyStruct := StoreIdentity(keyPair{PrivateKey: priv, PublicKey: pub})
+	//function that will store to blockchain
+	//return hash form of strings.
+
+	w.Header().Set("Access-Control-Allow-Origin", "*") //setting cors policy to allow by all
+	if r.Method == "OPTIONS" {                         //setting cors policy to allow by all
+		w.Header().Set("Access-Control-Allow-Headers", "Authorization") // You can add more headers here if needed   //setting cors policy to allow by all
+	} else {
+		// Your code goes here
+		w.Header().Add("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		var temp keyPair
+		temp.PublicKey = pub
+		temp.PrivateKey = priv
+		json.NewEncoder(w).Encode(private_public_keyStruct)
+		/*
+			{
+				public: hashString
+				private: hashString
+			}
+		*/
 	}
 
-	var currentKeyPair keyPair
-	json.Unmarshal(body, &currentKeyPair)
-	//till here currentKeyPair contain public and private.
+}
 
-	currBlock := prepareBlock("", currentKeyPair.PublicKey.N.String(), currentKeyPair.PublicKey.N.String(), true)
+//use to store identity.
+func StoreIdentity(keys keyPair) string { //change its return type to hashKEyPair
+	var hashPublicKey string = ""
+	// var hashPrivateKey string=""
+
+	preparedBlock := dl.PrepareBlock("", hashPublicKey, hashPublicKey, true)
+	fmt.Println(preparedBlock)
 	//append this block to the block chain
+	return hashPublicKey
 
 }
 
-func stringifyPrivateKey(keys keyPair) string { //take key pair and stringify and return private key
+func stringifyPrivateKey(keys rsa.PrivateKey) string { //take key pair and stringify and return private key
 	return ""
 }
 
-func stringifyPublicKey(keys keyPair) string {
+func stringifyPublicKey(keys rsa.PublicKey) string {
 	return ""
 }
 
-func parsePrivateKey(key string) {
+func parsePrivateKey(key string) *rsa.PrivateKey {
 	//return priv
+
 }
 
-func parsePublicKey(key string) {
+func parsePublicKey(key string) *rsa.PublicKey {
 	//return public
 }
 
@@ -66,6 +95,7 @@ func encryptMsg(msg string, keys keyPair) string {
 	return retVal
 }
 
+//return stringify version of msg block
 func stringifyMsgBlock(_content string, _sender string, _recv string) string {
 	currMsg := ds.Message{Content: _content, Sender: _sender, Recv: _recv} //till here msg block is ready
 	byteData, err := json.Marshal(currMsg)                                 //convert DS to byte
@@ -82,6 +112,7 @@ func stringifyMsgBlock(_content string, _sender string, _recv string) string {
 	// return ""
 }
 
+//return message block generated from string
 func parseMsgBlock(inputString string) ds.Message {
 	ByteData := []byte(inputString)       //convert from string to byte
 	var tempStruct ds.Message             //make data structure
@@ -113,24 +144,7 @@ func AddBook(w http.ResponseWriter, r *http.Request) { //sample function for pos
 	json.NewEncoder(w).Encode("Created")
 }
 
-func GetGeneratedKeys(w http.ResponseWriter, r *http.Request) {
-	priv, pub := ec.GenerateKeys()
-
-	w.Header().Set("Access-Control-Allow-Origin", "*") //setting cors policy to allow by all
-	if r.Method == "OPTIONS" {                         //setting cors policy to allow by all
-		w.Header().Set("Access-Control-Allow-Headers", "Authorization") // You can add more headers here if needed   //setting cors policy to allow by all
-	} else {
-		// Your code goes here
-		w.Header().Add("Content-Type", "application/json")
-		w.WriteHeader(http.StatusOK)
-		var temp keyPair
-		temp.PublicKey = pub
-		temp.PrivateKey = priv
-		json.NewEncoder(w).Encode(temp)
-	}
-
-}
-
+// ----------------------------------------Just for the display of the blockchain
 var BLChain *ds.Block
 
 func populate(chainHead *ds.Block) *ds.Block {

@@ -43,7 +43,7 @@ func VerifyChain(chainHead *ds.Block) bool {
 }
 
 //3.prepare block ,leaves 3 value {currentHash,prevHash and prevPointer}
-func prepareBlock(_hashData string, _sender string, _recv string, _controller bool) ds.Block {
+func PrepareBlock(_hashData string, _sender string, _recv string, _controller bool) ds.Block {
 	retVal := ds.Block{DataHash: _hashData, Sender: _sender, Recv: _recv, TimeStamp: time.Now().String(), IdentityBlock: _controller}
 	return retVal
 }

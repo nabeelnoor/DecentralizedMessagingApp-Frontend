@@ -23,9 +23,6 @@ func Test() {
 //generate private,public key of 2048
 func GenerateKeys() (*rsa.PrivateKey, *rsa.PublicKey) {
 	privateKey, _ := rsa.GenerateKey(rand.Reader, 2048)
-	// testing
-	fixedKeys()
-	//
 	return privateKey, &privateKey.PublicKey
 }
 
@@ -84,6 +81,14 @@ func fixedKeys() (*rsa.PrivateKey, *rsa.PublicKey) {
 	// fmt.Println("publicKey.N:", pubkey.N)
 	// fmt.Println("privateKey.primes[0]:", privkey.Primes[0])
 	return &privkey, &pubkey
+}
+
+func FixedEncrypt() {
+
+}
+
+func FixedDecrypt() {
+
 }
 
 /*
