@@ -12,7 +12,7 @@ type Block struct {
 	PrevHash      string `json:"prevHash"`
 	PrevPointer   *Block `json:"prevPointer"`
 	Sender        string `json:"sender"`
-	Recv          string `json:"content"`
+	Recv          string `json:"recv"`
 	TimeStamp     string `json:"timeStamp"`
 	IdentityBlock bool   `json:"IdentityBlock"`
 }

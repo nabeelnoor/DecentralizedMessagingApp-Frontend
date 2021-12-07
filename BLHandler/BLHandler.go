@@ -60,7 +60,7 @@ func StoreIdentity(keys keyPair) HashKeyPair { //change its return type to hashK
 	retVal := HashKeyPair{PrivateKey: hashPrivateKey, PublicKey: hashPublicKey} // prepare HashKeyPair to return
 
 	preparedBlock := dl.PrepareBlock("", hashPublicKey, hashPublicKey, true)
-	dl.InsertBlock(preparedBlock, BLChain)
+	BLChain = dl.InsertBlock(preparedBlock, BLChain)
 
 	fmt.Println(preparedBlock)
 	return retVal

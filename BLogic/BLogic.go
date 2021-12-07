@@ -16,7 +16,7 @@ func CalculateHash(inputBlock *ds.Block) string {
 	transaction_To_String += fmt.Sprintf("%v", inputBlock.Sender)
 	transaction_To_String += fmt.Sprintf("%v", inputBlock.TimeStamp)
 	transaction_To_String += fmt.Sprintf("%v", inputBlock.IdentityBlock)
-	var calculatedHash = fmt.Sprintf("%x\n", sha256.Sum256([]byte(transaction_To_String)))
+	var calculatedHash = fmt.Sprintf("%x", sha256.Sum256([]byte(transaction_To_String)))
 	return calculatedHash
 }
 
