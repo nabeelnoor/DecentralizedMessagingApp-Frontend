@@ -1,7 +1,6 @@
 package main //purpose is to make rest api in golang
 
 import (
-
 	hbl "Rest/pk/BLHandler"
 	b "Rest/pk/Book"
 	hb "Rest/pk/Handlers"
@@ -11,7 +10,6 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-
 )
 
 func Recv() {
@@ -87,8 +85,3 @@ func main() {
 	log.Println("API is closed!")
 
 }
-
-/*
-special thanks to this article:
-https://dev.to/karanpratapsingh/build-a-rest-api-with-go-for-beginners-3gp
-*/
