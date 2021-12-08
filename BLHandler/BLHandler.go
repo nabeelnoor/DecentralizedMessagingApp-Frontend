@@ -24,6 +24,39 @@ import (
 
 // --------------------Encryption Handler functions
 
+func StoreMsg(w http.ResponseWriter, r *http.Request) { //sample function for post
+	//interface to get data from body
+	type currentBody struct {
+		Content       string `json:"Content"`
+		Sender        string `json:"Sender"`
+		Recv          string `json:"Recv"`
+		SenderAddress string `json:"SenderAddress"`
+		RecvAddress   string `json:"RecvAddress"`
+	}
+
+	// Read to request body
+	defer r.Body.Close()
+	body, err := ioutil.ReadAll(r.Body)
+
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	var getBody currentBody
+	json.Unmarshal(body, &getBody)
+
+	fmt.Println(getBody.Content)
+	fmt.Println(getBody.Sender)
+	fmt.Println(getBody.Recv)
+	fmt.Println(getBody.SenderAddress)
+	fmt.Println(getBody.RecvAddress)
+
+	// Send a 201 created response
+	w.Header().Add("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode("Created")
+}
+
 //return generated public and private keys in HashKeyPair and store public key as identity to blockChain
 func GetGeneratedKeys(w http.ResponseWriter, r *http.Request) {
 	priv, pub := ec.GenerateKeys()
