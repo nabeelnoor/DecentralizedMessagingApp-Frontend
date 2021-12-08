@@ -71,6 +71,7 @@ func decryptParseMsg(_EncryptedData string, _publicKey string, _privateKey strin
 	return MsgBlock
 }
 
+//take ecnrypted data,sender address and recv address as post
 func DecryptMsgRequest(w http.ResponseWriter, r *http.Request) { //sample function for post
 	//interface to get data from body
 	type currentBody struct {
