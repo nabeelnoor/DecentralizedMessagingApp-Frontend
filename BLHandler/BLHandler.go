@@ -37,24 +37,65 @@ func StoreMsg(w http.ResponseWriter, r *http.Request) { //sample function for po
 	// Read to request body
 	defer r.Body.Close()
 	body, err := ioutil.ReadAll(r.Body)
-
 	if err != nil {
 		log.Fatalln(err)
 	}
-
 	var getBody currentBody
-	json.Unmarshal(body, &getBody)
-
-	fmt.Println(getBody.Content)
-	fmt.Println(getBody.Sender)
-	fmt.Println(getBody.Recv)
-	fmt.Println(getBody.SenderAddress)
-	fmt.Println(getBody.RecvAddress)
-
+	json.Unmarshal(body, &getBody) //getbody contain all data of http request body
+	encryptedMsg := encryptStringifyMsg(getBody.Content, getBody.Sender, getBody.Recv, getBody.RecvAddress, getBody.Sender)
+	preparedBlock := dl.PrepareBlock(encryptedMsg, getBody.SenderAddress, getBody.Recv, false)
+	BLChain = dl.InsertBlock(preparedBlock, BLChain) //insert that message
 	// Send a 201 created response
 	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode("Created")
+}
+
+//encrypt and stringify msg
+func encryptStringifyMsg(_content string, _sender string, _recv string, _publicKey string, _privateKey string) string {
+	stringifyMsg := stringifyMsgBlock(_content, _sender, _recv)
+	actualPublicKey := DecryptParsePublicKey(_publicKey)
+	encryptedMsg := ec.RSA_Encrypt(stringifyMsg, *actualPublicKey)
+	return encryptedMsg
+}
+
+func decryptParseMsg(_EncryptedData string, _publicKey string, _privateKey string) ds.Message {
+	actualPrivateKey := DecryptParsePrivateKey(_privateKey)
+	// fmt.Println("D:", actualPrivateKey.D)
+	// fmt.Println("E:", actualPrivateKey.E)
+	// fmt.Println("N:", actualPrivateKey.N)
+	// fmt.Println("EncryptedData:", _EncryptedData)
+	decryptedMsgString := ec.RSA_Decrypt(_EncryptedData, *actualPrivateKey)
+	fmt.Println("ResultedString:", decryptedMsgString)
+	MsgBlock := parseMsgBlock(decryptedMsgString)
+	return MsgBlock
+}
+
+func DecryptMsgRequest(w http.ResponseWriter, r *http.Request) { //sample function for post
+	//interface to get data from body
+	type currentBody struct {
+		EncryptedData string `json:"EncryptedData"`
+		SenderAddress string `json:"SenderAddress"`
+		RecvAddress   string `json:"RecvAddress"`
+	}
+
+	// Read to request body
+	defer r.Body.Close()
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	var getBody currentBody
+	json.Unmarshal(body, &getBody) //getbody contain all data of http request body
+	// fmt.Println("1.EncryptedData:", getBody.EncryptedData)
+	// fmt.Println("1.SenderADd:", getBody.SenderAddress)
+	// fmt.Println("1.RecvAdd:", getBody.RecvAddress)
+	decryptedMsg := decryptParseMsg(getBody.EncryptedData, getBody.SenderAddress, getBody.RecvAddress)
+
+	// Send a 201 created response
+	w.Header().Add("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(decryptedMsg)
 }
 
 //return generated public and private keys in HashKeyPair and store public key as identity to blockChain

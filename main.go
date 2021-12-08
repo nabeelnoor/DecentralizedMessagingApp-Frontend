@@ -64,7 +64,8 @@ func main() {
 	//registeration user case
 	router.HandleFunc("/registeration", hbl.GetGeneratedKeys).Methods(http.MethodGet) //to get public and private keys
 	router.HandleFunc("/bl", hbl.GetBlockChain).Methods(http.MethodGet)               //get api-return blockChain as json object
-	router.HandleFunc("/storeMsg", hbl.StoreMsg).Methods(http.MethodPost)             //get api-return blockChain as json object
+	router.HandleFunc("/storeMsg", hbl.StoreMsg).Methods(http.MethodPost)
+	router.HandleFunc("/decryptMsg", hbl.DecryptMsgRequest).Methods(http.MethodPost)
 
 	router.HandleFunc("/books", hb.GetAllBooks).Methods(http.MethodGet) //get api
 	// router.HandleFunc("/books/{id}", hb.GetBook).Methods(http.MethodGet) //get book by id ,, localhost:4000/1
