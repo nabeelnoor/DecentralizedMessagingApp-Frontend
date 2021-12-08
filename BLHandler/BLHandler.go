@@ -1,20 +1,13 @@
 package handler
 
 import (
-	bk "Rest/pk/Book"
 	ec "Rest/pk/EncryptionPKG"
-	mockbk "Rest/pk/mock"
 	"crypto/rsa"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
-	"math/rand"
 	"net/http"
-	"strconv"
-	"strings"
-
-	"github.com/gorilla/mux"
 
 	dl "Rest/pk/BLogic"
 	ds "Rest/pk/DS"
@@ -222,6 +215,7 @@ func Greet(w http.ResponseWriter, r *http.Request) {
 }
 
 // -------------------------------------------------------------------------below here is sample of books.
+/*
 func AddBook(w http.ResponseWriter, r *http.Request) { //sample function for post
 	// Read to request body
 	defer r.Body.Close()
@@ -300,7 +294,6 @@ func GetBook2(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 }
-
 func UpdateBook(w http.ResponseWriter, r *http.Request) {
 	// Read dynamic id parameter
 	var BookID int
@@ -376,3 +369,4 @@ func DeleteBook(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 }
+*/
