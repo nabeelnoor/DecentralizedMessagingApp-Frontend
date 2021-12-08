@@ -23,20 +23,11 @@ import (
 )
 
 // --------------------Encryption Handler functions
-type keyPair struct {
-	PublicKey  *rsa.PublicKey  `json:"PublicKey"`
-	PrivateKey *rsa.PrivateKey `json:"PrivateKey"`
-}
-
-type HashKeyPair struct {
-	PublicKey  string `json:"PublicKey"`
-	PrivateKey string `json:"PrivateKey"`
-}
 
 //return generated public and private keys in HashKeyPair and store public key as identity to blockChain
 func GetGeneratedKeys(w http.ResponseWriter, r *http.Request) {
 	priv, pub := ec.GenerateKeys()
-	private_public_keyStruct := StoreIdentity(keyPair{PrivateKey: priv, PublicKey: pub})
+	private_public_keyStruct := StoreIdentity(ds.KeyPair{PrivateKey: priv, PublicKey: pub})
 
 	w.Header().Set("Access-Control-Allow-Origin", "*") //setting cors policy to allow by all
 	if r.Method == "OPTIONS" {                         //setting cors policy to allow by all
@@ -45,19 +36,18 @@ func GetGeneratedKeys(w http.ResponseWriter, r *http.Request) {
 		// Your code goes here
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		var temp keyPair
+		var temp ds.KeyPair
 		temp.PublicKey = pub
 		temp.PrivateKey = priv
 		json.NewEncoder(w).Encode(private_public_keyStruct)
 	}
-
 }
 
 //use to store identity to blockChain. (only public key)
-func StoreIdentity(keys keyPair) HashKeyPair { //change its return type to hashKEyPair
+func StoreIdentity(keys ds.KeyPair) ds.HashKeyPair { //change its return type to hashKEyPair
 	hashPrivateKey := EncryptStringifyPrivateKey(*keys.PrivateKey)
 	hashPublicKey := EncryptStringifyPublicKey(*keys.PublicKey)
-	retVal := HashKeyPair{PrivateKey: hashPrivateKey, PublicKey: hashPublicKey} // prepare HashKeyPair to return
+	retVal := ds.HashKeyPair{PrivateKey: hashPrivateKey, PublicKey: hashPublicKey} // prepare HashKeyPair to return
 
 	preparedBlock := dl.PrepareBlock("", hashPublicKey, hashPublicKey, true)
 	BLChain = dl.InsertBlock(preparedBlock, BLChain)
@@ -148,9 +138,6 @@ func GetBlockChain(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		json.NewEncoder(w).Encode(BLChain)
 	}
-
-	// //depopulate
-	// BLChain = nil
 }
 
 func Greet(w http.ResponseWriter, r *http.Request) {

@@ -1,3 +1,4 @@
+//implements core logic of blockchain
 package BLogic
 
 import (

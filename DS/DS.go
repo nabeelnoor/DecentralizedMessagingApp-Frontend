@@ -1,4 +1,7 @@
+//implements data structure
 package DS
+
+import "crypto/rsa"
 
 type Message struct {
 	Content string `json:"content"`
@@ -15,6 +18,16 @@ type Block struct {
 	Recv          string `json:"recv"`
 	TimeStamp     string `json:"timeStamp"`
 	IdentityBlock bool   `json:"IdentityBlock"`
+}
+
+type KeyPair struct {
+	PublicKey  *rsa.PublicKey  `json:"PublicKey"`
+	PrivateKey *rsa.PrivateKey `json:"PrivateKey"`
+}
+
+type HashKeyPair struct {
+	PublicKey  string `json:"PublicKey"`
+	PrivateKey string `json:"PrivateKey"`
 }
 
 // DataHash,CurrentHash,PrevHash,PrevPointer,Sender,Recv,TimeStamp
