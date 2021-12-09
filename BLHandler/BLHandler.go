@@ -37,11 +37,36 @@ func StoreMsg(w http.ResponseWriter, r *http.Request) { //sample function for po
 	json.Unmarshal(body, &getBody) //getbody contain all data of http request body
 	encryptedMsg := encryptStringifyMsg(getBody.Content, getBody.Sender, getBody.Recv, getBody.RecvAddress, getBody.Sender)
 	preparedBlock := dl.PrepareBlock(encryptedMsg, getBody.SenderAddress, getBody.Recv, false)
+	fmt.Println("Before error")
+	preparedBlock.SenderSignature = AppendSenderSignature(preparedBlock, getBody.SenderAddress)
+	fmt.Println("After error")
 	BLChain = dl.InsertBlock(preparedBlock, BLChain) //insert that message
+	// fmt.Println(BLChain.SenderSignature)
+	fmt.Println("Before sending to:", []byte(BLChain.SenderSignature))
 	// Send a 201 created response
 	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode("Created")
+}
+
+//ds.block , encrypted private key => return ds.block that contain SenderSignature
+func AppendSenderSignature(block ds.Block, key string) []byte {
+	privKey := DecryptParsePrivateKey(key)
+	bytes := ec.SignPK(*privKey)
+	fmt.Println("\n\nBugConsoleAppender:", bytes, "\n\n.")
+	return bytes
+}
+
+//SenderSignature(string),encrypted public key => returns true if signature verifies otherwise return false {if not verify or senderSignature donot contain string}
+func VerifySenderSignature(SenderSignature []byte, key string) bool {
+	pubKey := DecryptParsePublicKey(key)
+	// if SenderSignature == "" {
+	// 	fmt.Println("\n\nFirst check\n\n.")
+	// 	return false
+	// }
+	fmt.Println("\n\nBugConsoleVerifier:", SenderSignature, "\n\n.")
+	flag := ec.VerifyPK(SenderSignature, *pubKey)
+	return flag
 }
 
 //encrypt and stringify msg
@@ -68,9 +93,10 @@ func decryptParseMsg(_EncryptedData string, _publicKey string, _privateKey strin
 func DecryptMsgRequest(w http.ResponseWriter, r *http.Request) { //sample function for post
 	//interface to get data from body
 	type currentBody struct {
-		EncryptedData string `json:"EncryptedData"`
-		SenderAddress string `json:"SenderAddress"`
-		RecvAddress   string `json:"RecvAddress"`
+		EncryptedData   string `json:"EncryptedData"`
+		SenderAddress   string `json:"SenderAddress"`
+		RecvAddress     string `json:"RecvAddress"`
+		SenderSignature []byte `json:"SenderSignature"`
 	}
 
 	// Read to request body
@@ -85,11 +111,12 @@ func DecryptMsgRequest(w http.ResponseWriter, r *http.Request) { //sample functi
 	// fmt.Println("1.SenderADd:", getBody.SenderAddress)
 	// fmt.Println("1.RecvAdd:", getBody.RecvAddress)
 	decryptedMsg := decryptParseMsg(getBody.EncryptedData, getBody.SenderAddress, getBody.RecvAddress)
-
+	flag := VerifySenderSignature(getBody.SenderSignature, getBody.SenderAddress)
+	response := ds.RecvViewMsg{ActualMessage: decryptedMsg, Authentication: flag}
 	// Send a 201 created response
 	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(decryptedMsg)
+	json.NewEncoder(w).Encode(response)
 }
 
 //return generated public and private keys in HashKeyPair and store public key as identity to blockChain

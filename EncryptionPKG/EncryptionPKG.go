@@ -101,7 +101,7 @@ func FixedDecrypt(encryptedMessage string) string {
 
 //get signature signed by private key
 func SignPK(privkey rsa.PrivateKey) []byte {
-	message := []byte("007897173629212163558848340899620213419734089962021341973408996202134197")
+	message := []byte("teqessageabcasdasdkkkjkuiuqweqwe")
 	hashed := sha256.Sum256(message)
 	signature, err := rsa.SignPKCS1v15(rand.Reader, &privkey, crypto.SHA256, hashed[:])
 	if err != nil {
@@ -113,7 +113,7 @@ func SignPK(privkey rsa.PrivateKey) []byte {
 
 //input: signature([]byte) and public key(rsa.publicKey) => returns true when signature is signed by same private key from which public key belong else return false
 func VerifyPK(input []byte, key rsa.PublicKey) bool {
-	message := []byte("007897173629212163558848340899620213419734089962021341973408996202134197")
+	message := []byte("teqessageabcasdasdkkkjkuiuqweqwe")
 	hashed := sha256.Sum256(message)
 	err := rsa.VerifyPKCS1v15(&key, crypto.SHA256, hashed[:], input)
 	if err != nil {
