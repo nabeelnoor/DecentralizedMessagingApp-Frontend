@@ -1,12 +1,14 @@
 package EncryptionPKG
 
 import (
+	"crypto"
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/sha256"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"os"
 	"strings"
 )
 
@@ -95,6 +97,30 @@ func FixedDecrypt(encryptedMessage string) string {
 	priv, _ := fixedKeys()
 	plainText := RSA_Decrypt(encryptedMessage, *priv)
 	return plainText
+}
+
+//get signature signed by private key
+func SignPK(privkey rsa.PrivateKey) []byte {
+	message := []byte("007897173629212163558848340899620213419734089962021341973408996202134197")
+	hashed := sha256.Sum256(message)
+	signature, err := rsa.SignPKCS1v15(rand.Reader, &privkey, crypto.SHA256, hashed[:])
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error from signing: %s\n", err)
+		return nil
+	}
+	return signature
+}
+
+//input: signature([]byte) and public key(rsa.publicKey) => returns true when signature is signed by same private key from which public key belong else return false
+func VerifyPK(input []byte, key rsa.PublicKey) bool {
+	message := []byte("007897173629212163558848340899620213419734089962021341973408996202134197")
+	hashed := sha256.Sum256(message)
+	err := rsa.VerifyPKCS1v15(&key, crypto.SHA256, hashed[:], input)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error from verification: %s\n", err)
+		return false
+	}
+	return true
 }
 
 /*
