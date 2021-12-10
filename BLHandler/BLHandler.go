@@ -37,7 +37,7 @@ func GetRecvMsg(w http.ResponseWriter, r *http.Request) {
 	json.Unmarshal(body, &getBody) //getbody contain all data of http request body
 	flag := verifyAddress(BLChain, getBody.UserAddress)
 	if flag {
-		msgList := getRecvMsgBlockChain(BLChain, getBody.UserAddress)
+		msgList := getRecvSendMsgBlockChain(BLChain, getBody.UserAddress, 0)
 		msgListLength := len(msgList)
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
@@ -49,16 +49,55 @@ func GetRecvMsg(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func getRecvMsgBlockChain(_head *ds.Block, _UserAddress string) []ds.Block {
+func GetSendMsg(w http.ResponseWriter, r *http.Request) {
+	type currentBody struct {
+		UserAddress string `json:"UserAddress"`
+	}
+	type MessageQuery struct {
+		Count       int        `json:"Count"`
+		MessageList []ds.Block `json:"MessageList"`
+	}
+	type ResponseBody struct {
+		Status   string       `json:"Status"` /*invalidPrivate key,OK,OK*/
+		Messages MessageQuery `json:"Messages"`
+	}
+	// Read to request body
+	defer r.Body.Close()
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	var getBody currentBody
+	json.Unmarshal(body, &getBody) //getbody contain all data of http request body
+	flag := verifyAddress(BLChain, getBody.UserAddress)
+	if flag {
+		msgList := getRecvSendMsgBlockChain(BLChain, getBody.UserAddress, 1) //---
+		msgListLength := len(msgList)
+		w.Header().Add("Content-Type", "application/json")
+		w.WriteHeader(http.StatusCreated)
+		json.NewEncoder(w).Encode(ResponseBody{Status: "OK", Messages: MessageQuery{Count: msgListLength, MessageList: msgList}})
+	} else {
+		w.Header().Add("Content-Type", "application/json")
+		w.WriteHeader(http.StatusCreated)
+		json.NewEncoder(w).Encode(ResponseBody{Status: "Error:Not Valid Private Key"})
+	}
+}
+
+func getRecvSendMsgBlockChain(_head *ds.Block, _UserAddress string, _senderController int) []ds.Block {
 	_privKey := DecryptParsePrivateKey(_UserAddress)
 	_publicKey := _privKey.PublicKey
 	retVal := make([]ds.Block, 0, 10)
 	currentPtr := _head
 	for currentPtr != nil {
 		if currentPtr.IdentityBlock == false {
-			pubAddress := *(DecryptParsePublicKey(currentPtr.Recv))
-			if comparePublicKey(_publicKey, pubAddress) { //--
-				tempMsgBlock := copyMsgBlock(*currentPtr) //--
+			var pubAddress rsa.PublicKey
+			if _senderController == 0 { //get recv msg
+				pubAddress = *(DecryptParsePublicKey(currentPtr.Recv))
+			} else { //get send msg
+				pubAddress = *(DecryptParsePublicKey(currentPtr.Sender))
+			}
+			if comparePublicKey(_publicKey, pubAddress) {
+				tempMsgBlock := copyMsgBlock(*currentPtr)
 				retVal = append(retVal, tempMsgBlock)
 			}
 		}
