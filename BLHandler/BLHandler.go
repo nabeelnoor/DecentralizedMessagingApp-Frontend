@@ -15,6 +15,58 @@ import (
 	// "github.com/karanpratapsingh/tutorials/go/crud/pkg/mocks"
 )
 
+func GetRecvMsg(w http.ResponseWriter, r *http.Request) {
+	type currentBody struct {
+		UserAddress string `json:"UserAddress"`
+	}
+	type ResponseBody struct {
+		Status   string     `json:"Status"` /*invalidPrivate key,OK,OK*/
+		Messages []ds.Block `json:"Messages"`
+	}
+	// Read to request body
+	defer r.Body.Close()
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	var getBody currentBody
+	json.Unmarshal(body, &getBody) //getbody contain all data of http request body
+	flag := verifyAddress(BLChain, getBody.UserAddress)
+	if flag {
+		msgList := getRecvMsgBlockChain(BLChain, getBody.UserAddress)
+		w.Header().Add("Content-Type", "application/json")
+		w.WriteHeader(http.StatusCreated)
+		json.NewEncoder(w).Encode(ResponseBody{Status: "OK", Messages: msgList})
+	} else {
+		w.Header().Add("Content-Type", "application/json")
+		w.WriteHeader(http.StatusCreated)
+		json.NewEncoder(w).Encode(ResponseBody{Status: "Not Valid Private Key"})
+	}
+}
+
+func getRecvMsgBlockChain(_head *ds.Block, _UserAddress string) []ds.Block {
+	_privKey := DecryptParsePrivateKey(_UserAddress)
+	_publicKey := _privKey.PublicKey
+	retVal := make([]ds.Block, 0, 10)
+	currentPtr := _head
+	for currentPtr != nil {
+		if currentPtr.IdentityBlock == false {
+			pubAddress := *(DecryptParsePublicKey(currentPtr.Recv))
+			if comparePublicKey(_publicKey, pubAddress) { //--
+				tempMsgBlock := copyMsgBlock(*currentPtr) //--
+				retVal = append(retVal, tempMsgBlock)
+			}
+		}
+		currentPtr = currentPtr.PrevPointer
+	}
+	return retVal
+}
+
+func copyMsgBlock(head ds.Block) ds.Block {
+	retVal := ds.Block{DataHash: head.DataHash, CurrentHash: head.CurrentHash, PrevHash: head.PrevHash, PrevPointer: nil, Sender: head.Sender, Recv: head.Recv, TimeStamp: head.TimeStamp, SenderSignature: head.SenderSignature, IdentityBlock: head.IdentityBlock}
+	return retVal
+}
+
 func LoginAccount(w http.ResponseWriter, r *http.Request) {
 	type currentBody struct {
 		UserAddress string `json:"UserAddress"`
