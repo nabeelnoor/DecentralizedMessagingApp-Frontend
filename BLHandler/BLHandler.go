@@ -16,15 +16,22 @@ import (
 )
 
 // --------------------Encryption Handler functions
+var pkSignErrorFlag bool = false
 
 func StoreMsg(w http.ResponseWriter, r *http.Request) { //sample function for post
+	pkSignErrorFlag = false
 	//interface to get data from body
+
 	type currentBody struct {
 		Content       string `json:"Content"`
 		Sender        string `json:"Sender"`
 		Recv          string `json:"Recv"`
 		SenderAddress string `json:"SenderAddress"`
 		RecvAddress   string `json:"RecvAddress"`
+	}
+	type ResponseBody struct {
+		Response string `json:"Response"`
+		Reason   string `json:"Reason"`
 	}
 
 	// Read to request body
@@ -39,18 +46,31 @@ func StoreMsg(w http.ResponseWriter, r *http.Request) { //sample function for po
 	preparedBlock := dl.PrepareBlock(encryptedMsg, getBody.SenderAddress, getBody.Recv, false)
 	fmt.Println("Before error")
 	preparedBlock.SenderSignature = AppendSenderSignature(preparedBlock, getBody.SenderAddress)
-	fmt.Println("After error")
-	BLChain = dl.InsertBlock(preparedBlock, BLChain) //insert that message
-	// fmt.Println(BLChain.SenderSignature)
-	fmt.Println("Before sending to:", []byte(BLChain.SenderSignature))
-	// Send a 201 created response
-	w.Header().Add("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode("Created")
+	if pkSignErrorFlag {
+		// invalid primary key causes error.
+		w.Header().Add("Content-Type", "application/json")
+		w.WriteHeader(http.StatusCreated)
+		json.NewEncoder(w).Encode(ResponseBody{Response: "Error", Reason: "Invalid private key"})
+	} else {
+		BLChain = dl.InsertBlock(preparedBlock, BLChain) //insert that message
+		// fmt.Println(BLChain.SenderSignature)
+		fmt.Println("Before sending to:", []byte(BLChain.SenderSignature))
+		// Send a 201 created response
+		w.Header().Add("Content-Type", "application/json")
+		w.WriteHeader(http.StatusCreated)
+		json.NewEncoder(w).Encode(ResponseBody{Response: "Successfully Created", Reason: ""})
+	}
+
 }
 
 //ds.block , encrypted private key => return ds.block that contain SenderSignature
 func AppendSenderSignature(block ds.Block, key string) []byte {
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println("Recovered in f", r)
+			pkSignErrorFlag = true
+		}
+	}()
 	privKey := DecryptParsePrivateKey(key)
 	bytes := ec.SignPK(*privKey)
 	fmt.Println("\n\nBugConsoleAppender:", bytes, "\n\n.")
@@ -59,11 +79,13 @@ func AppendSenderSignature(block ds.Block, key string) []byte {
 
 //SenderSignature(string),encrypted public key => returns true if signature verifies otherwise return false {if not verify or senderSignature donot contain string}
 func VerifySenderSignature(SenderSignature []byte, key string) bool {
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println("Recovered in f", r)
+			pkSignErrorFlag = true
+		}
+	}()
 	pubKey := DecryptParsePublicKey(key)
-	// if SenderSignature == "" {
-	// 	fmt.Println("\n\nFirst check\n\n.")
-	// 	return false
-	// }
 	fmt.Println("\n\nBugConsoleVerifier:", SenderSignature, "\n\n.")
 	flag := ec.VerifyPK(SenderSignature, *pubKey)
 	return flag
@@ -91,6 +113,7 @@ func decryptParseMsg(_EncryptedData string, _publicKey string, _privateKey strin
 
 //take ecnrypted data,sender address and recv address as post
 func DecryptMsgRequest(w http.ResponseWriter, r *http.Request) { //sample function for post
+	pkSignErrorFlag = false
 	//interface to get data from body
 	type currentBody struct {
 		EncryptedData   string `json:"EncryptedData"`
@@ -98,7 +121,10 @@ func DecryptMsgRequest(w http.ResponseWriter, r *http.Request) { //sample functi
 		RecvAddress     string `json:"RecvAddress"`
 		SenderSignature []byte `json:"SenderSignature"`
 	}
-
+	type ResponseBody struct {
+		Status   string         `json:"Status"`
+		Response ds.RecvViewMsg `json:"Response"`
+	}
 	// Read to request body
 	defer r.Body.Close()
 	body, err := ioutil.ReadAll(r.Body)
@@ -112,11 +138,17 @@ func DecryptMsgRequest(w http.ResponseWriter, r *http.Request) { //sample functi
 	// fmt.Println("1.RecvAdd:", getBody.RecvAddress)
 	decryptedMsg := decryptParseMsg(getBody.EncryptedData, getBody.SenderAddress, getBody.RecvAddress)
 	flag := VerifySenderSignature(getBody.SenderSignature, getBody.SenderAddress)
-	response := ds.RecvViewMsg{ActualMessage: decryptedMsg, Authentication: flag}
-	// Send a 201 created response
-	w.Header().Add("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(response)
+	if pkSignErrorFlag {
+		w.Header().Add("Content-Type", "application/json")
+		w.WriteHeader(http.StatusCreated)
+		json.NewEncoder(w).Encode(ResponseBody{Status: "Error(due to invalid public key)"})
+	} else {
+		response := ds.RecvViewMsg{ActualMessage: decryptedMsg, Authentication: flag}
+		// Send a 201 created response
+		w.Header().Add("Content-Type", "application/json")
+		w.WriteHeader(http.StatusCreated)
+		json.NewEncoder(w).Encode(ResponseBody{Status: "OK", Response: response})
+	}
 }
 
 //return generated public and private keys in HashKeyPair and store public key as identity to blockChain
