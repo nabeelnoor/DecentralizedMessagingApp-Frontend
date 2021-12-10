@@ -19,9 +19,13 @@ func GetRecvMsg(w http.ResponseWriter, r *http.Request) {
 	type currentBody struct {
 		UserAddress string `json:"UserAddress"`
 	}
+	type MessageQuery struct {
+		Count       int        `json:"Count"`
+		MessageList []ds.Block `json:"MessageList"`
+	}
 	type ResponseBody struct {
-		Status   string     `json:"Status"` /*invalidPrivate key,OK,OK*/
-		Messages []ds.Block `json:"Messages"`
+		Status   string       `json:"Status"` /*invalidPrivate key,OK,OK*/
+		Messages MessageQuery `json:"Messages"`
 	}
 	// Read to request body
 	defer r.Body.Close()
@@ -34,13 +38,14 @@ func GetRecvMsg(w http.ResponseWriter, r *http.Request) {
 	flag := verifyAddress(BLChain, getBody.UserAddress)
 	if flag {
 		msgList := getRecvMsgBlockChain(BLChain, getBody.UserAddress)
+		msgListLength := len(msgList)
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
-		json.NewEncoder(w).Encode(ResponseBody{Status: "OK", Messages: msgList})
+		json.NewEncoder(w).Encode(ResponseBody{Status: "OK", Messages: MessageQuery{Count: msgListLength, MessageList: msgList}})
 	} else {
 		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
-		json.NewEncoder(w).Encode(ResponseBody{Status: "Not Valid Private Key"})
+		json.NewEncoder(w).Encode(ResponseBody{Status: "Error:Not Valid Private Key"})
 	}
 }
 
