@@ -60,6 +60,7 @@ func main() {
 	router.HandleFunc("/", hbl.Greet).Methods(http.MethodGet) //get api -just for greet (debugging)
 	//registeration user case
 	router.HandleFunc("/registeration", hbl.GetGeneratedKeys).Methods(http.MethodGet) //to get public and private keys
+	router.HandleFunc("/login", hbl.LoginAccount).Methods(http.MethodPost)            //to get public and private keys
 	router.HandleFunc("/bl", hbl.GetBlockChain).Methods(http.MethodGet)               //get api-return blockChain as json object
 	router.HandleFunc("/storeMsg", hbl.StoreMsg).Methods(http.MethodPost)
 	router.HandleFunc("/decryptMsg", hbl.DecryptMsgRequest).Methods(http.MethodPost)

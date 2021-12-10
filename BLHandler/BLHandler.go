@@ -15,6 +15,33 @@ import (
 	// "github.com/karanpratapsingh/tutorials/go/crud/pkg/mocks"
 )
 
+func LoginAccount(w http.ResponseWriter, r *http.Request) {
+	type currentBody struct {
+		UserAddress string `json:"UserAddress"`
+	}
+	type ResponseBody struct {
+		AuthenticationStatus string `json:"AuthenticationStatus"`
+	}
+	// Read to request body
+	defer r.Body.Close()
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	var getBody currentBody
+	json.Unmarshal(body, &getBody) //getbody contain all data of http request body
+	flag := verifyAddress(BLChain, getBody.UserAddress)
+	if flag {
+		w.Header().Add("Content-Type", "application/json")
+		w.WriteHeader(http.StatusCreated)
+		json.NewEncoder(w).Encode(ResponseBody{AuthenticationStatus: "Verified"})
+	} else {
+		w.Header().Add("Content-Type", "application/json")
+		w.WriteHeader(http.StatusCreated)
+		json.NewEncoder(w).Encode(ResponseBody{AuthenticationStatus: "Not Verified"})
+	}
+}
+
 // --------------------Encryption Handler functions
 var pkSignErrorFlag bool = false
 
@@ -273,159 +300,27 @@ func Greet(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode("Welcome to Website")
 }
 
-// -------------------------------------------------------------------------below here is sample of books.
-/*
-func AddBook(w http.ResponseWriter, r *http.Request) { //sample function for post
-	// Read to request body
-	defer r.Body.Close()
-	body, err := ioutil.ReadAll(r.Body)
-
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	var book bk.Book
-	json.Unmarshal(body, &book)
-
-	// Append to the Book mocks
-	book.Id = rand.Intn(100)
-	mockbk.Books = append(mockbk.Books, book)
-
-	// Send a 201 created response
-	w.Header().Add("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode("Created")
+//stringify both public keys and then compare string
+func comparePublicKey(key1 rsa.PublicKey, key2 rsa.PublicKey) bool {
+	keys1 := fmt.Sprint(key1)
+	keys2 := fmt.Sprint(key2)
+	return (keys1 == keys2)
 }
 
-func GetAllBooks(w http.ResponseWriter, r *http.Request) {
-	w.Header().Add("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(mockbk.Books)
+//(encryptedPrivateKey)=>(true/false)  :check if public key of given private key stored inside blockchain or not.
+func verifyAddress(header *ds.Block, _currentPrivateAddress string) bool {
+	_privKey := DecryptParsePrivateKey(_currentPrivateAddress)
+	_publicKey := _privKey.PublicKey
+
+	var current *ds.Block = header
+	for current != nil {
+		if current.IdentityBlock == true {
+			blpub := *(DecryptParsePublicKey(current.Recv))
+			if comparePublicKey(_publicKey, blpub) {
+				return true
+			}
+		}
+		current = current.PrevPointer
+	}
+	return false
 }
-
-func GetBook(w http.ResponseWriter, r *http.Request) {
-	// Read dynamic id parameter
-	vars := mux.Vars(r)
-	id, _ := strconv.Atoi(vars["id"])
-	fmt.Println(id, "test")
-	// Iterate over all the mock books
-	for _, book := range mockbk.Books {
-		if book.Id == id {
-			// If ids are equal send book as a response
-			w.Header().Add("Content-Type", "application/json")
-			w.WriteHeader(http.StatusOK)
-
-			json.NewEncoder(w).Encode(book)
-			break
-		}
-	}
-}
-
-func GetBook2(w http.ResponseWriter, r *http.Request) {
-	// Read dynamic id parameter
-	var BookID int
-	fmt.Println(r.URL)
-	allParams := r.URL.Query()
-	for k, v := range allParams {
-		fmt.Println(k, "=>", v)                                         //print key value pair of all params
-		appendV := strings.Join(v, "")                                  //append slice of string to single string
-		fmt.Println("after converting string slice to string", appendV) //print
-		finalOutput, _ := strconv.Atoi(appendV)                         //convert string to number
-		if k == "bookID" {
-			BookID = finalOutput
-		}
-
-		if finalOutput == 23 { //just for debuggin
-			fmt.Println("holla")
-		}
-	}
-
-	// fmt.Println(id)
-	// Iterate over all the mock books
-	for _, book := range mockbk.Books {
-		if book.Id == BookID {
-			// If ids are equal send book as a response
-			w.Header().Add("Content-Type", "application/json")
-			w.WriteHeader(http.StatusOK)
-
-			json.NewEncoder(w).Encode(book)
-			break
-		}
-	}
-}
-func UpdateBook(w http.ResponseWriter, r *http.Request) {
-	// Read dynamic id parameter
-	var BookID int
-	fmt.Println(r.URL)
-	allParams := r.URL.Query()
-	for k, v := range allParams {
-		fmt.Println(k, "=>", v)                                         //print key value pair of all params
-		appendV := strings.Join(v, "")                                  //append slice of string to single string
-		fmt.Println("after converting string slice to string", appendV) //print
-		finalOutput, _ := strconv.Atoi(appendV)                         //convert string to number
-		if k == "bookID" {
-			BookID = finalOutput
-		}
-
-		if finalOutput == 23 { //just for debuggin
-			fmt.Println("holla")
-		}
-	}
-
-	defer r.Body.Close()
-	body, _ := ioutil.ReadAll(r.Body)
-
-	var updatedBook bk.Book
-	json.Unmarshal(body, &updatedBook)
-
-	// Iterate over all the mock Books
-	for index, book := range mockbk.Books {
-		if book.Id == BookID {
-			// Update and send a response when book Id matches dynamic Id
-			book.Title = updatedBook.Title
-			book.Author = updatedBook.Author
-			book.Desc = updatedBook.Desc
-
-			mockbk.Books[index] = book
-			w.Header().Add("Content-Type", "application/json")
-			w.WriteHeader(http.StatusOK)
-
-			json.NewEncoder(w).Encode("Updated")
-			break
-		}
-	}
-}
-
-func DeleteBook(w http.ResponseWriter, r *http.Request) {
-	// Read the dynamic id parameter
-	var BookID int
-	fmt.Println(r.URL)
-	allParams := r.URL.Query()
-	for k, v := range allParams {
-		fmt.Println(k, "=>", v)                                         //print key value pair of all params
-		appendV := strings.Join(v, "")                                  //append slice of string to single string
-		fmt.Println("after converting string slice to string", appendV) //print
-		finalOutput, _ := strconv.Atoi(appendV)                         //convert string to number
-		if k == "bookID" {
-			BookID = finalOutput
-		}
-
-		if finalOutput == 23 { //just for debuggin
-			fmt.Println("holla")
-		}
-	}
-
-	// Iterate over all the mock Books
-	for index, book := range mockbk.Books {
-		if book.Id == BookID {
-			// Delete book and send a response if the book Id matches dynamic Id
-			mockbk.Books = append(mockbk.Books[:index], mockbk.Books[index+1:]...)
-
-			w.Header().Add("Content-Type", "application/json")
-			w.WriteHeader(http.StatusOK)
-			json.NewEncoder(w).Encode("Deleted")
-			break
-		}
-	}
-}
-*/
