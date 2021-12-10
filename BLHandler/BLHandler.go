@@ -409,6 +409,12 @@ func comparePublicKey(key1 rsa.PublicKey, key2 rsa.PublicKey) bool {
 func verifyAddress(header *ds.Block, _currentPrivateAddress string) bool {
 	_privKey := DecryptParsePrivateKey(_currentPrivateAddress)
 	_publicKey := _privKey.PublicKey
+	// fmt.Println("\n\nD:", _privKey.D)
+	// fmt.Println("\n\nE:", _privKey.E)
+	// fmt.Println("\n\nN:", _privKey.N)
+	if _privKey.D == nil { //no private key
+		return false
+	}
 
 	var current *ds.Block = header
 	for current != nil {
