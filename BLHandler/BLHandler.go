@@ -166,7 +166,9 @@ func StoreMsg(w http.ResponseWriter, r *http.Request) { //sample function for po
 	var getBody currentBody
 	json.Unmarshal(body, &getBody) //getbody contain all data of http request body
 	encryptedMsg := encryptStringifyMsg(getBody.Content, getBody.Sender, getBody.Recv, getBody.RecvAddress, getBody.SenderAddress)
-	preparedBlock := dl.PrepareBlock(encryptedMsg, getBody.SenderAddress, getBody.RecvAddress, false)
+	_privKey := DecryptParsePrivateKey(getBody.SenderAddress)
+	_pubKeyString := EncryptStringifyPublicKey(_privKey.PublicKey)
+	preparedBlock := dl.PrepareBlock(encryptedMsg, _pubKeyString, getBody.RecvAddress, false)
 	fmt.Println("Before error")
 	preparedBlock.SenderSignature = AppendSenderSignature(preparedBlock, getBody.SenderAddress)
 	if pkSignErrorFlag {
