@@ -23,11 +23,15 @@ func CalculateHash(inputBlock *ds.Block) string {
 
 //2.verify block chain from new to gensis block
 func VerifyChain(chainHead *ds.Block) bool {
+	if chainHead == nil {
+		return true
+	}
+	// -----------
 	compromisedFlag := false
 	var currPtr = chainHead
-	for currPtr != nil { //for block iteration
-		var calculatedHashOfCurrentBlockToVerify = CalculateHash(currPtr)
-		if currPtr.CurrentHash != calculatedHashOfCurrentBlockToVerify {
+	for currPtr.PrevPointer != nil { //for block iteration
+		var calculatedHashOfCurrentBlockToVerify = CalculateHash(currPtr.PrevPointer)
+		if currPtr.PrevHash != calculatedHashOfCurrentBlockToVerify {
 			compromisedFlag = true
 			break
 		}
@@ -80,3 +84,17 @@ func ListBlocks(chainHead *ds.Block) {
 	}
 	fmt.Println("--------------------------------------------------------------------------------------\n\n ")
 }
+
+func CalculateHeight(head *ds.Block) int {
+	var height int = 0
+	var curr *ds.Block = head
+	for curr != nil {
+		height = height + 1
+		curr = curr.PrevPointer
+	}
+	return height
+}
+
+// func verifyBlockChain(head *ds.Block) bool{
+
+// }

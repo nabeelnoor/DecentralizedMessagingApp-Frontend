@@ -428,3 +428,17 @@ func verifyAddress(header *ds.Block, _currentPrivateAddress string) bool {
 	}
 	return false
 }
+
+//return list of blockChain that is more updated
+func CandidateBL(current *ds.Block, candidate *ds.Block) ds.Block {
+	if dl.VerifyChain(candidate) == true {
+		height1 := dl.CalculateHeight(current)
+		height2 := dl.CalculateHeight(candidate)
+		if height1 > height2 {
+			return *current
+		} else {
+			return *candidate
+		}
+	}
+	return *current
+}
