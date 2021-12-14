@@ -20,14 +20,20 @@ import ClipboardIcon from 'react-clipboard-icon'
 import axios from "axios";
 import request from "superagent";
 import Chat from './chat';
-
-
+// import Cookies from 'universal-cookie';
+// import { useSelector,useDispatch } from 'react-redux'; //redux
+// import {StorePrivate,ClearPrivateData} from './actions/index' //redux
 
 const style1 = { fill: 'grey',marginLeft:'10px' }
 
 //
 function Register() {
-    
+    // const cookies = new Cookies();
+
+    // console.log(cookies.get('myCat')); // Pacman
+
+    // const number=useSelector(state=>state.priv) //redux
+    // const dispatch =useDispatch(); //redux
 
     //     console.log(window.location.pathname); //yields: "/js" (where snippets run)
     // console.log(window.location.href);  
@@ -47,6 +53,7 @@ function Register() {
 
     const Reg = () => {
         // console.log(process.env.REACT_APP_TEST)
+        
         fetch(process.env.REACT_APP_TEST+":4000/registeration")
             .then(res => res.json())
             .then(
@@ -55,7 +62,14 @@ function Register() {
                     console.log(result)
                     setPrivateKey(result.PrivateKey)
                     setPublicKey(result.PublicKey)
-                    console.log(privateKey)
+                    console.log("Private:"+privateKey)
+                    console.log("Public:"+publicKey)
+            
+                    // cookies.set("PID","asdas", { path: '/' });
+                    localStorage.setItem('pid',result.PrivateKey)
+                    console.log(localStorage.getItem('pid'))
+                    
+                    // dispatch(StorePrivate(result.PrivateKey)
                 },
                 // Note: it's important to handle errors here
                 // instead of a catch() block so that we don't swallow
@@ -69,6 +83,12 @@ function Register() {
 
     const doSome = () => {
         navigator.clipboard.writeText(document.getElementById("targetPrivateKey").value)
+        // e.preventDefault();
+        // console.log(e)
+    }
+
+    const doSome2 = () => {
+        // navigator.clipboard.writeText(document.getElementById("targetPrivateKey").value)
         // e.preventDefault();
         // console.log(e)
     }
@@ -138,10 +158,10 @@ fetch("http://localhost:4000/login", requestOptions)
   .then(result => {
       console.log(result)
       if (result.AuthenticationStatus=="Verified"){
-        <Link to="chat"></Link>
+        //<Link to="chat"></Link>
         // navigate(`/chat/${publicKey}`)
           console.log("1111")
-          window.location.href = `http://localhost:3000/chat?id=${privateKey}`;
+         window.location.href = `http://localhost:3000/chat`;
          
       }
   })
@@ -161,7 +181,8 @@ fetch("http://localhost:4000/login", requestOptions)
 
     return (
         <div>
-            <Link to="/" activeClassName="active"><Button variant="contained">Back</Button></Link>
+            
+            <Link to="/"><Button variant="contained">Back</Button></Link>
             <BackgroundSlider
                 images={[background, background1, background2]}
                 duration={8} transition={2} />
@@ -180,6 +201,7 @@ fetch("http://localhost:4000/login", requestOptions)
                         />
                         <Button variant="contained" style={{ marginLeft: '80px', marginBottom: '30px' }} onClick={Login}>Login</Button>
                         <br/>
+                        {/* {number} */}
                         <Button variant="contained" style={{ marginLeft: '75px', paddingBottom: '15px' }} onClick={Reg}>Register</Button>
                         <br />
                     </CardContent>
@@ -193,11 +215,14 @@ fetch("http://localhost:4000/login", requestOptions)
                         onClick={doSome}
                         // onClick={  () => {navigator.clipboard.writeText(this.state.textToCopy)}}
                     /> */}
-                     <input type="text" value={privateKey} id='targetPrivateKey' onClick={doSome} style={{height:'40px',marginLeft:'60px',marginBottom:'10px'}} />
+                  
+                  
+                     <input type="text" value={privateKey} onChange={doSome2} id='targetPrivateKey' onClick={doSome} style={{height:'40px',marginLeft:'60px',marginBottom:'10px'}} />
                          <ClipboardIcon
                         size={20}
                         style={style1}
                         />
+                        
 
                 </Card>
 

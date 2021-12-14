@@ -1,4 +1,4 @@
-const privReducer = (state="", action) => {
+const privReducer = (state, action) => {
     switch (action.type) {
         case 'MYSTORE':
             return action.temp;
@@ -7,7 +7,7 @@ const privReducer = (state="", action) => {
         case 'ClearPrivate':
             return "";
         default:
-            return state;
+            return "";
     }
 }
 
