@@ -160,6 +160,7 @@ fetch("http://localhost:4000/login", requestOptions)
       if (result.AuthenticationStatus=="Verified"){
         //<Link to="chat"></Link>
         // navigate(`/chat/${publicKey}`)
+        localStorage.setItem('pid',loginPass)
           console.log("1111")
          window.location.href = `http://localhost:3000/chat`;
          

@@ -59,6 +59,7 @@ function Chat(props) {
     const [Recv, setRecv] = useState('');
     const [RecvAddress, setRecvAdd] = useState('');
     const [SenderList, setSenderList] = useState([]);
+    const [RecvList,setRecvList]= useState([]);
     // console.log(str)
 
     //     const location = useLocation()
@@ -123,7 +124,9 @@ function Chat(props) {
         fetch("http://localhost:4000/getRecvMsg", requestOptions)
             .then(response => response.json())
             .then(result => {
+                console.log("Test:\n",localStorage.getItem('pid'))
                 console.log(result)
+                setRecvList(result.Messages.MessageList);
                 //   if (result.AuthenticationStatus=="Verified"){
                 //     //<Link to="chat"></Link>
                 //     // navigate(`/chat/${publicKey}`)
@@ -245,6 +248,26 @@ function Chat(props) {
                         <Typography gutterBottom variant="h5" component="div">
                             Display Received Messages
                         </Typography>
+                        {
+                            RecvList.map((item, index) => (
+                                <div key={index}>
+                                    <span><h5>DataHash: {item.DataHash}</h5></span>
+                                    <br />
+                                    <span><h5>CurrentHash: {item.currentHash}</h5></span>
+                                    <br />
+                                    <span><h5>PrevHash:{item.prevHash}</h5></span>
+                                    <br />
+                                    <span><h5>Sender:{item.sender}</h5></span>
+                                    <br />
+                                    <span><h5>Receiver:{item.recv}</h5></span>
+                                    <br />
+                                    <span><h5>TimeStamp: {item.timeStamp}</h5></span>
+                                    <br />
+                                    <span><h5>SenderSignature: {item.SenderSignature}</h5></span>
+                                </div>
+                            ))
+
+                        }
                     </CardContent>
 
 
