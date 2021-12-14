@@ -6,6 +6,7 @@ import Register from './register';
 import {createBrowserHistory} from 'history';
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import reportWebVitals from './reportWebVitals';
+import Chat from './chat';
 const history = createBrowserHistory({basename : `${process.env.PUBLIC_URL}`});
 
 class App extends React.Component {
@@ -18,8 +19,9 @@ class App extends React.Component {
     return (
       <Router>
       <Routes>
-        <Route path="/register" caseSensitive={false} element={<Register />} />
+        <Route path="register" caseSensitive={false} element={<Register />} />
         <Route path="/" caseSensitive={false} element={<Main />} />
+        <Route path="chat" caseSensitive={false} element={<Chat />} />
       </Routes>
     </Router>
       )  

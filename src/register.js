@@ -10,11 +10,24 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import { CardActionArea } from '@mui/material';
-import { Link } from "react-router-dom";
+import {  BrowserRouter as Router,
+    Switch,
+    Route,
+    Link,
+    useRouteMatch } from "react-router-dom";
 import { useEffect, useState } from 'react';
+import ClipboardIcon from 'react-clipboard-icon'
+import axios from "axios";
+import request from "superagent";
+import Chat from './chat';
+
+
+
+const style1 = { fill: 'grey',marginLeft:'10px' }
+
 //
 function Register() {
-
+    
 
     //     console.log(window.location.pathname); //yields: "/js" (where snippets run)
     // console.log(window.location.href);  
@@ -27,6 +40,8 @@ function Register() {
     str = str.replace("/register", "");
 
     const [privateKey, setPrivateKey] = useState("");
+    const [publicKey, setPublicKey] = useState("");
+    const [loginPass, setloginPass] = useState('');
     // console.log(str)
 
 
@@ -39,6 +54,7 @@ function Register() {
                     // console.log("\n\nConsole log env::",process.env.REACT_APP_Test)
                     console.log(result)
                     setPrivateKey(result.PrivateKey)
+                    setPublicKey(result.PublicKey)
                     console.log(privateKey)
                 },
                 // Note: it's important to handle errors here
@@ -51,6 +67,97 @@ function Register() {
 
 
 
+    const doSome = () => {
+        navigator.clipboard.writeText(document.getElementById("targetPrivateKey").value)
+        // e.preventDefault();
+        // console.log(e)
+    }
+
+
+    const Login = () => {
+        // //console.log('Login function called');
+
+
+//         fetch("http://localhost:4000/login", {
+//     // Adding method type
+//     method: "POST",
+//     // Adding body or contents to send
+//     body: JSON.stringify({
+//         UserAddress: loginPass
+//     }), 
+//     // Adding headers to the request
+//     headers: {
+//         "Content-type": "application/json; charset=UTF-8"
+//     }
+// })
+ 
+// // Converting to JSON
+// .then(response => response.json())
+ 
+// // Displaying results to console
+// .then(json => console.log(json));
+        // axios.post("http://localhost:4000/login", {
+        //     UserAddress: loginPass,
+        // })
+        //   .then((Response) => {
+        //     console.log(Response)
+            // if(Response == Response.data.msg) {
+            //   setloginStatus(Response.data.msg);
+            // }
+            // if(Response.data.msg == "Password matched") {
+            //   window.location.href = `http://localhost:3000/doctorM?id=${loginID}`;
+            // }
+            // else {
+            //   setloginStatus(Response.data.msg);
+            // }
+        //   })
+
+// //  request
+// // .post('http://localhost:4000/login')
+// // .set('Content-Type', 'application/x-www-form-urlencoded')
+// // .send({ UserAddress: loginPass})
+// // .end(function(err, res){
+// // console.log(res.AuthenticationStatus);
+// // });  
+var myHeaders = new Headers();
+myHeaders.append("Content-Type", "application/json");
+
+var raw = JSON.stringify({
+  "UserAddress": loginPass
+});
+
+var requestOptions = {
+  method: 'POST',
+  headers: myHeaders,
+  body: raw,
+  redirect: 'follow'
+};
+
+fetch("http://localhost:4000/login", requestOptions)
+  .then(response => response.json())
+  .then(result => {
+      console.log(result)
+      if (result.AuthenticationStatus=="Verified"){
+        <Link to="chat"></Link>
+        // navigate(`/chat/${publicKey}`)
+          console.log("1111")
+          window.location.href = `http://localhost:3000/chat`;
+         
+      }
+  })
+  .catch(error => console.log('error', error));
+
+
+
+
+
+
+
+
+
+
+      
+      }
 
     return (
         <div>
@@ -68,18 +175,29 @@ function Register() {
                             Login with Your Private Key
                         </Typography>
                         <br />
-                        <TextField id="outlined-basic" label="Enter Your Private Key" variant="outlined" style={{ color: 'wheat', marginLeft: '20px', paddingBottom: '30px' }} />
-                        <Button variant="contained" style={{ marginLeft: '80px', marginBottom: '30px' }}>Login</Button>
-                        <Button variant="contained" style={{ marginLeft: '50px', paddingBottom: '10px' }} onClick={Reg}>Register Yourself</Button>
+                        <TextField id="outlined-basic" label="Enter Your Private Key" variant="outlined" style={{ color: 'wheat', marginLeft: '20px', paddingBottom: '30px' }} 
+                        onChange={(e) => {setloginPass(e.target.value)}}
+                        />
+                        <Button variant="contained" style={{ marginLeft: '80px', marginBottom: '30px' }} onClick={Login}>Login</Button>
+                        <br/>
+                        <Button variant="contained" style={{ marginLeft: '75px', paddingBottom: '15px' }} onClick={Reg}>Register</Button>
                         <br />
                     </CardContent>
                     {/* <TextField id="outlined-basic" label={privateKey} variant="outlined" style={{color:'wheat',marginLeft:'20px',paddingBottom:'30px'}} /> */}
-                    <TextareaAutosize
+                    {/* <TextareaAutosize
                         aria-label="empty textarea"
                         placeholder={privateKey}
+                        value={privateKey}
                         readOnly="readonly"
-                        style={{ width: 300, height: 100, marginLeft: '15px' }}
-                    />
+                        style={{ width: 300, height: 30, marginLeft: '15px' }}
+                        onClick={doSome}
+                        // onClick={  () => {navigator.clipboard.writeText(this.state.textToCopy)}}
+                    /> */}
+                     <input type="text" value={privateKey} id='targetPrivateKey' onClick={doSome} style={{height:'40px',marginLeft:'60px',marginBottom:'10px'}} />
+                         <ClipboardIcon
+                        size={20}
+                        style={style1}
+                        />
 
                 </Card>
 
