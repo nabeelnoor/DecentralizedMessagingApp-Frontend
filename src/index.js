@@ -1,16 +1,34 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
+import Main from './main';
+import Register from './register';
+import {createBrowserHistory} from 'history';
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import reportWebVitals from './reportWebVitals';
+const history = createBrowserHistory({basename : `${process.env.PUBLIC_URL}`});
 
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
-);
 
+class App extends React.Component {
+
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    return (
+      <Router>
+      <Routes>
+        <Route path="/register" caseSensitive={false} element={<Register />} />
+        <Route path="/" caseSensitive={false} element={<Main />} />
+      </Routes>
+    </Router>
+      )  
+    }
+};
+
+
+ReactDOM.render(<App />, document.querySelector('#root'));
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
