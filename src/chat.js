@@ -10,21 +10,21 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import { CardActionArea } from '@mui/material';
-import { Link,useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useEffect, useState } from 'react';
 import ClipboardIcon from 'react-clipboard-icon'
-import {createBrowserHistory} from 'history';
+import { createBrowserHistory } from 'history';
 import Cookies from 'universal-cookie'
 
 
-const history = createBrowserHistory({basename : `${process.env.PUBLIC_URL}`});
+const history = createBrowserHistory({ basename: `${process.env.PUBLIC_URL}` });
 
 
 
 
 
 
-const style1 = { fill: 'grey',marginLeft:'10px' }
+const style1 = { fill: 'grey', marginLeft: '10px' }
 
 function Chat(props) {
 
@@ -33,12 +33,12 @@ function Chat(props) {
     const [privateKey, setPrivateKey] = useState("");
     // setPrivateKey(cookies.get('pid'))
     // setPrivateKey(localStorage.getItem('pid'))
-    var pid=localStorage.getItem('pid')
+    var pid = localStorage.getItem('pid')
     console.log(pid)
 
 
-   // const queryParams = queryString.parse(props.location.search);
-   // console.log("111111")
+    // const queryParams = queryString.parse(props.location.search);
+    // console.log("111111")
     //console.log(queryParams)
 
 
@@ -58,119 +58,123 @@ function Chat(props) {
     const [Sender, setSender] = useState('');
     const [Recv, setRecv] = useState('');
     const [RecvAddress, setRecvAdd] = useState('');
+    const [SenderList, setSenderList] = useState([]);
     // console.log(str)
 
-//     const location = useLocation()
-//   const { pid } = location.state
+    //     const location = useLocation()
+    //   const { pid } = location.state
 
-//   console.log(pid)
+    //   console.log(pid)
 
     const showSent = () => {
+        console.log("Show Sent is called", localStorage.getItem('pid'))
         // console.log(process.env.REACT_APP_TEST)
         var myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
-        
+
         var raw = JSON.stringify({
-          "UserAddress": pid
+            "UserAddress": localStorage.getItem('pid')
         });
-        
+
         var requestOptions = {
-          method: 'POST',
-          headers: myHeaders,
-          body: raw,
-          redirect: 'follow'
+            method: 'POST',
+            headers: myHeaders,
+            body: raw,
+            redirect: 'follow'
         };
-        
+
         fetch("http://localhost:4000/getSentMsg", requestOptions)
-          .then(response => response.json())
-          .then(result => {
-              console.log(result)
-            //   if (result.AuthenticationStatus=="Verified"){
-            //     //<Link to="chat"></Link>
-            //     // navigate(`/chat/${publicKey}`)
-            //       console.log("1111")
-            //      window.location.href = `http://localhost:3000/chat`;
-                 
-            //   }
-          })
-          .catch(error => console.log('error', error));
-        
-        
+            .then(response => response.json())
+            .then(result => {
+                console.log(result.Messages.MessageList)
+                setSenderList(result.Messages.MessageList);
+                //   if (result.AuthenticationStatus=="Verified"){
+                //     //<Link to="chat"></Link>
+                //     // navigate(`/chat/${publicKey}`)
+                //       console.log("1111")
+                //      window.location.href = `http://localhost:3000/chat`;
+
+                //   }
+            })
+            .catch(error => console.log('error', error));
+
+
     }
 
 
 
-    
+
     const showGet = () => {
         // console.log(process.env.REACT_APP_TEST)
         var myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
-        
+
         var raw = JSON.stringify({
-          "UserAddress": pid
+            "UserAddress": pid
         });
-        
+
         var requestOptions = {
-          method: 'POST',
-          headers: myHeaders,
-          body: raw,
-          redirect: 'follow'
+            method: 'POST',
+            headers: myHeaders,
+            body: raw,
+            redirect: 'follow'
         };
-        
+
         fetch("http://localhost:4000/getRecvMsg", requestOptions)
-          .then(response => response.json())
-          .then(result => {
-              console.log(result)
-            //   if (result.AuthenticationStatus=="Verified"){
-            //     //<Link to="chat"></Link>
-            //     // navigate(`/chat/${publicKey}`)
-            //       console.log("1111")
-            //      window.location.href = `http://localhost:3000/chat`;
-                 
-            //   }
-          })
-          .catch(error => console.log('error', error));
-        
-        
+            .then(response => response.json())
+            .then(result => {
+                console.log(result)
+                //   if (result.AuthenticationStatus=="Verified"){
+                //     //<Link to="chat"></Link>
+                //     // navigate(`/chat/${publicKey}`)
+                //       console.log("1111")
+                //      window.location.href = `http://localhost:3000/chat`;
+
+                //   }
+            })
+            .catch(error => console.log('error', error));
+
+
     }
 
 
-       
+
     const send = () => {
         // console.log(process.env.REACT_APP_TEST)
         var myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
-        
+
         var raw = JSON.stringify({
-    "Content":content,
-    "Sender":Sender,
-    "Recv":Recv,
-    "SenderAddress":pid,
-    "RecvAddress": RecvAddress
+            "Content": content,
+            "Sender": Sender,
+            "Recv": Recv,
+            "SenderAddress":  localStorage.getItem('pid'),
+            "RecvAddress": RecvAddress
         });
-        
+
         var requestOptions = {
-          method: 'POST',
-          headers: myHeaders,
-          body: raw,
-          redirect: 'follow'
+            method: 'POST',
+            headers: myHeaders,
+            body: raw,
+            redirect: 'follow'
         };
-        
-        fetch("http://localhost:4000/getRecvMsg", requestOptions)
-          .then(response => response.json())
-          .then(result => {
-              console.log(result)
-            //   if (result.AuthenticationStatus=="Verified"){
-            //     //<Link to="chat"></Link>
-            //     // navigate(`/chat/${publicKey}`)
-            //       console.log("1111")
-            //      window.location.href = `http://localhost:3000/chat`;
-                 
-            //   }
-          })
-          .catch(error => console.log('error', error));
-        
-        
+
+        fetch("http://localhost:4000/storeMsg", requestOptions)
+            .then(response => response.json())
+            .then(result => {
+                console.log(result)
+                console.log(raw)
+                //   if (result.AuthenticationStatus=="Verified"){
+                //     //<Link to="chat"></Link>
+                //     // navigate(`/chat/${publicKey}`)
+                //       console.log("1111")
+                //      window.location.href = `http://localhost:3000/chat`;
+
+                //   }
+            })
+            .catch(error => console.log('error', error));
+
+
     }
 
 
@@ -190,7 +194,7 @@ function Chat(props) {
                 <h1 style={{ color: 'white', paddingLeft: '50px', paddingTop: '60px' }}>Secure Messaging Application</h1>
                 <p style={{ color: 'whitesmoke', paddingLeft: '50px', fontSize: 20 }}>An End-to-End Secure Messaging Application which ensures that your data is
                     Encrypted and and is not altered by any third party.</p>
-               <div style={{display:'inline',flexDirection:'row'}}>
+
                 <Card sx={{ maxWidth: 345, marginLeft: '10px' }}>
                     <CardContent>
                         <Typography gutterBottom variant="h5" component="div">
@@ -205,18 +209,40 @@ function Chat(props) {
 
 
                 </Card>
+
                 <Card sx={{ maxWidth: 345, marginLeft: '350px' }}>
                     <CardContent>
-                    <Typography gutterBottom variant="h5" component="div">
+                        <Typography gutterBottom variant="h5" component="div">
                             Display Sent Messages
                         </Typography>
+
+                        {
+                            SenderList.map((item, index) => (
+                                <div key={index}>
+                                    <span><h5>DataHash: {item.DataHash}</h5></span>
+                                    <br />
+                                    <span><h5>CurrentHash: {item.currentHash}</h5></span>
+                                    <br />
+                                    <span><h5>PrevHash:{item.prevHash}</h5></span>
+                                    <br />
+                                    <span><h5>Sender:{item.sender}</h5></span>
+                                    <br />
+                                    <span><h5>Receiver:{item.recv}</h5></span>
+                                    <br />
+                                    <span><h5>TimeStamp: {item.timeStamp}</h5></span>
+                                    <br />
+                                    <span><h5>SenderSignature: {item.SenderSignature}</h5></span>
+                                </div>
+                            ))
+
+                        }
                     </CardContent>
 
 
                 </Card>
                 <Card sx={{ maxWidth: 345, marginLeft: '750px' }}>
                     <CardContent>
-                    <Typography gutterBottom variant="h5" component="div">
+                        <Typography gutterBottom variant="h5" component="div">
                             Display Received Messages
                         </Typography>
                     </CardContent>
@@ -226,26 +252,25 @@ function Chat(props) {
                 <Card sx={{ maxWidth: 345, marginLeft: '1100px' }}>
                     <CardContent>
                         <Typography gutterBottom variant="h5" component="div">
-                           Sent Someone a Message
+                            Sent Someone a Message
                         </Typography>
-                        <TextField id="outlined-basic" label="Enter Content" variant="outlined" style={{ color: 'wheat', marginLeft: '20px', paddingBottom: '30px' }} 
-                        onChange={(e) => {setContent(e.target.value)}}
+                        <TextField id="outlined-basic" label="Enter Content" variant="outlined" style={{ color: 'wheat', marginLeft: '20px', paddingBottom: '30px' }}
+                            onChange={(e) => { setContent(e.target.value) }}
                         />
-                          <TextField id="outlined-basic" label="Enter Sender Info" variant="outlined" style={{ color: 'wheat', marginLeft: '20px', paddingBottom: '30px' }} 
-                        onChange={(e) => {setSender(e.target.value)}}
+                        <TextField id="outlined-basic" label="Enter Sender Info" variant="outlined" style={{ color: 'wheat', marginLeft: '20px', paddingBottom: '30px' }}
+                            onChange={(e) => { setSender(e.target.value) }}
                         />
-                          <TextField id="outlined-basic" label="Enter Recv Info" variant="outlined" style={{ color: 'wheat', marginLeft: '20px', paddingBottom: '30px' }} 
-                        onChange={(e) => {setRecv(e.target.value)}}
+                        <TextField id="outlined-basic" label="Enter Recv Info" variant="outlined" style={{ color: 'wheat', marginLeft: '20px', paddingBottom: '30px' }}
+                            onChange={(e) => { setRecv(e.target.value) }}
                         />
-                          <TextField id="outlined-basic" label="Enter Address of Recv" variant="outlined" style={{ color: 'wheat', marginLeft: '20px', paddingBottom: '30px' }} 
-                        onChange={(e) => {setRecvAdd(e.target.value)}}
+                        <TextField id="outlined-basic" label="Enter Address of Recv" variant="outlined" style={{ color: 'wheat', marginLeft: '20px', paddingBottom: '30px' }}
+                            onChange={(e) => { setRecvAdd(e.target.value) }}
                         />
                         <Button variant="contained" style={{ marginLeft: '50px', paddingBottom: '15px' }} onClick={send}>send Message</Button>
                     </CardContent>
 
 
                 </Card>
-                </div>
             </div>
         </div>
     );
