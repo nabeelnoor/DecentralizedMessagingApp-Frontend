@@ -8,7 +8,6 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import reportWebVitals from './reportWebVitals';
 const history = createBrowserHistory({basename : `${process.env.PUBLIC_URL}`});
 
-
 class App extends React.Component {
 
   constructor(props) {

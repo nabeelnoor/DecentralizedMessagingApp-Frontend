@@ -31,10 +31,12 @@ function Register() {
 
 
     const Reg = () => {
-        fetch("http://localhost:4000/registeration")
+        // console.log(process.env.REACT_APP_TEST)
+        fetch(process.env.REACT_APP_TEST+":4000/registeration")
             .then(res => res.json())
             .then(
                 (result) => {
+                    // console.log("\n\nConsole log env::",process.env.REACT_APP_Test)
                     console.log(result)
                     setPrivateKey(result.PrivateKey)
                     console.log(privateKey)
