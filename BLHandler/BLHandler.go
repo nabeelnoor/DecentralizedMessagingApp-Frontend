@@ -112,6 +112,8 @@ func copyMsgBlock(head ds.Block) ds.Block {
 }
 
 func LoginAccount(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	type currentBody struct {
 		UserAddress string `json:"UserAddress"`
 	}

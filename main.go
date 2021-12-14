@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/rs/cors"
 )
 
 func Recv() {
@@ -77,10 +78,15 @@ func main() {
 	// router.HandleFunc("/books", func(w http.ResponseWriter, r *http.Request) {
 	// 	json.NewEncoder(w).Encode("Hello World")
 	// })
+	c := cors.New(cors.Options{
+		AllowedOrigins:   []string{"*"},
+		AllowCredentials: true,
+	})
 
 	log.Println("API is running!")
-	go Controller()
-	http.ListenAndServe(":4000", router) //created for handling of rest apis
+	// go Controller()
+	handler := c.Handler(router)
+	log.Fatal(http.ListenAndServe(":4000", handler)) //created for handling of rest apis
 	log.Println("API is closed!")
 
 }
