@@ -4,6 +4,7 @@ import BackgroundSlider from 'react-background-slider'
 import background from "./c1.jpg"
 import background1 from "./c2.jpg"
 import background2 from "./c3.jpg"
+import Button from '@mui/material/Button';
 //
 function App() {
   return (
@@ -15,7 +16,7 @@ function App() {
 <h1 style={{color:'white',paddingLeft:'50px',paddingTop:'60px'}}>Secure Messaging Application</h1>
 <p style={{color:'whitesmoke',paddingLeft:'50px',fontSize:20}}>An End-to-End Secure Messaging Application which ensures that your data is 
 Encrypted and and is not altered by any third party.</p>
-<button style={{marginLeft:'50px',height:35,borderRadius:'15px 10px 10px 10px'}}>Start Chat</button>
+<Button variant="contained" style={{marginLeft:'50px'}}>Start Chat</Button>
 </div>
 </div>
   );
