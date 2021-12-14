@@ -7,7 +7,15 @@ import {createBrowserHistory} from 'history';
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import reportWebVitals from './reportWebVitals';
 import Chat from './chat';
+
+import {createStore,combineReducers} from 'redux'
+import allReducers from './reducers'
+import { Provider } from 'react-redux';
+import Test from './test';
+const store=createStore(allReducers);
+
 const history = createBrowserHistory({basename : `${process.env.PUBLIC_URL}`});
+
 
 class App extends React.Component {
 
@@ -22,6 +30,7 @@ class App extends React.Component {
         <Route path="register" caseSensitive={false} element={<Register />} />
         <Route path="/" caseSensitive={false} element={<Main />} />
         <Route path="chat" caseSensitive={false} element={<Chat />} />
+        <Route path="test" caseSensitive={false} element={<Test />} />
       </Routes>
     </Router>
       )  
@@ -29,7 +38,11 @@ class App extends React.Component {
 };
 
 
-ReactDOM.render(<App />, document.querySelector('#root'));
+ReactDOM.render(
+ <Provider store={store}>
+   <App />
+ </Provider>
+  , document.querySelector('#root'));
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
