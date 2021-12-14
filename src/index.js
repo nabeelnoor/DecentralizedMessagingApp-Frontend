@@ -17,7 +17,7 @@ class App extends React.Component {
 
   render() {
     return (
-      <Router>
+      <Router history={history}>
       <Routes>
         <Route path="register" caseSensitive={false} element={<Register />} />
         <Route path="/" caseSensitive={false} element={<Main />} />

@@ -13,13 +13,26 @@ import { CardActionArea } from '@mui/material';
 import { Link,useLocation } from "react-router-dom";
 import { useEffect, useState } from 'react';
 import ClipboardIcon from 'react-clipboard-icon'
+import {createBrowserHistory} from 'history';
+
+
+const history = createBrowserHistory({basename : `${process.env.PUBLIC_URL}`});
+
+
+
 
 
 
 const style1 = { fill: 'grey',marginLeft:'10px' }
 
-//
-function Chat() {
+function Chat(props) {
+
+    const search = props.location.search; // returns the URL query String
+    const params = new URLSearchParams(search); 
+    const IdFromURL = params.get('id'); 
+   // const queryParams = queryString.parse(props.location.search);
+    console.log("111111")
+    //console.log(queryParams)
 
 
     //     console.log(window.location.pathname); //yields: "/js" (where snippets run)

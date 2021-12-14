@@ -141,7 +141,7 @@ fetch("http://localhost:4000/login", requestOptions)
         <Link to="chat"></Link>
         // navigate(`/chat/${publicKey}`)
           console.log("1111")
-          window.location.href = `http://localhost:3000/chat`;
+          window.location.href = `http://localhost:3000/chat?id=${privateKey}`;
          
       }
   })
