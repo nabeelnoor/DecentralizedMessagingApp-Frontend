@@ -22,3 +22,9 @@ export const DisplayPrivate=()=>{
         type: 'MYDISPLAY'
     }
 }
+
+export const ClearPrivateData=()=>{
+    return {
+        type: 'ClearPrivate'
+    }
+}

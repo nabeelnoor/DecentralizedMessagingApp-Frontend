@@ -4,6 +4,8 @@ const privReducer = (state="", action) => {
             return action.temp;
         case 'MYDISPLAY':
             return state;
+        case 'ClearPrivate':
+            return "";
         default:
             return state;
     }

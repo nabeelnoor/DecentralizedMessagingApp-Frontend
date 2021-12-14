@@ -14,8 +14,9 @@ import { Link,useLocation } from "react-router-dom";
 import { useEffect, useState } from 'react';
 import ClipboardIcon from 'react-clipboard-icon'
 import {createBrowserHistory} from 'history';
-import { useSelector,useDispatch } from 'react-redux';
-import {StorePrivate} from './actions/index'
+
+import { useSelector,useDispatch } from 'react-redux'; //redux
+import {StorePrivate,ClearPrivateData} from './actions/index' //redux
 
 
 const history = createBrowserHistory({basename : `${process.env.PUBLIC_URL}`});
@@ -28,8 +29,8 @@ const history = createBrowserHistory({basename : `${process.env.PUBLIC_URL}`});
 const style1 = { fill: 'grey',marginLeft:'10px' }
 
 function Test(props) {
-    const number=useSelector(state=>state.priv)
-    const dispatch =useDispatch();
+    const number=useSelector(state=>state.priv) //redux
+    const dispatch =useDispatch(); //redux
 //     const search = props.location.search; // returns the URL query String
 // //     const params = new URLSearchParams(search); 
 // //     const IdFromURL = params.get('id'); 
@@ -87,6 +88,8 @@ function Test(props) {
     return (
         <div>
             <p onClick={()=>dispatch(StorePrivate("adasd"))}>asd{number}</p>
+
+            <p onClick={()=>dispatch(ClearPrivateData())}>clear Data</p>
             
             {/* <Link to="/" activeClassName="active"><Button variant="contained">Back</Button></Link>
             <BackgroundSlider
