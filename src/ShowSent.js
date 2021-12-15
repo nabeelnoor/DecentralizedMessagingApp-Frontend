@@ -62,7 +62,10 @@ function ShowSent(props) {
             .catch(error => console.log('error', error));
     }, []);
 
-
+    const mystyle = {
+        display: "flex",
+        flexDirection: "row"
+    };
     return (
         <div>
             <Link to="/" activeClassName="active"><Button variant="contained">Back</Button></Link>
@@ -74,39 +77,48 @@ function ShowSent(props) {
                 <p style={{ color: 'whitesmoke', paddingLeft: '50px', fontSize: 20 }}>An End-to-End Secure Messaging Application which ensures that your data is
                     Encrypted and and is not altered by any third party.</p>
 
+                {
+                    SenderList.map((item, index) => (
+                        <div key={index} style={mystyle}>
+                            <Card sx={{ maxWidth: 345 }}>
+                                <CardContent>
+                                    <Typography gutterBottom variant="body" component="div">
+                                        <TextField label='Hash' style={{ height: '20px' }} value={item.currentHash}></TextField>
+                                    </Typography>
+                                    <br></br>
+                                    <br></br>
+                                    <Typography gutterBottom variant="body" component="div">
+                                        <TextField label='PrevHash' style={{ height: '20px' }} value={item.prevHash}></TextField>
+                                    </Typography>
+                                    <br></br>
+                                    <br></br>
+                                    <Typography gutterBottom variant="body" component="div">
+                                        <TextField label='SenderAddress' style={{ height: '20px' }} value={item.sender}></TextField>
+                                    </Typography>
+                                    <br></br>
+                                    <br></br>
+                                    <Typography gutterBottom variant="body" component="div">
+                                        <TextField label='RecvAddress' style={{ height: '20px' }} value={item.recv}></TextField>
+                                    </Typography>
+                                    <br></br>
+                                    <br></br>
+                                    <Typography gutterBottom variant="body" component="div">
+                                        <TextField label='TimeStamp' placeholder='PrevHash' style={{ height: '20px' }} value={item.timeStamp}></TextField>
+                                    </Typography>
+                                    <br></br>
+                                    <br></br>
+                                    <Typography gutterBottom variant="body" component="div">
+                                        <TextField label='SenderSignature' placeholder='PrevHash' style={{ height: '20px' }} value={item.SenderSignature}></TextField>
+                                    </Typography>
+                                    <br></br>
+                                    <br></br>
+                                </CardContent>
 
-                <Card sx={{ marginLeft: '10px' }}>
-                    <CardContent>
-                        <Typography gutterBottom variant="h5" component="div">
-                            Display Sent Messages
-                        </Typography>
+                            </Card>
+                        </div>
+                    ))
 
-                        {
-                            SenderList.map((item, index) => (
-                                <div key={index}>
-                                    <span><h5>DataHash: {item.DataHash}</h5></span>
-                                    <br />
-                                    <span><h5>CurrentHash: {item.currentHash}</h5></span>
-                                    <br />
-                                    <span><h5>PrevHash:{item.prevHash}</h5></span>
-                                    <br />
-                                    <span><h5>Sender:{item.sender}</h5></span>
-                                    <br />
-                                    <span><h5>Receiver:{item.recv}</h5></span>
-                                    <br />
-                                    <span><h5>TimeStamp: {item.timeStamp}</h5></span>
-                                    <br />
-                                    <span><h5>SenderSignature: {item.SenderSignature}</h5></span>
-                                </div>
-                            ))
-
-                        }
-                    </CardContent>
-
-
-                </Card>
-
-
+                }
             </div>
         </div>
     );
