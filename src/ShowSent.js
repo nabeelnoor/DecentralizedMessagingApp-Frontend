@@ -64,7 +64,10 @@ function ShowSent(props) {
 
     const mystyle = {
         display: "flex",
-        flexDirection: "row"
+        flexDirection: "row",
+        justifyContent:"flex-start",
+
+
     };
     return (
         <div>
@@ -76,49 +79,51 @@ function ShowSent(props) {
                 <h1 style={{ color: 'white', paddingLeft: '50px', paddingTop: '15px' }}>Secure Messaging Application</h1>
                 <p style={{ color: 'whitesmoke', paddingLeft: '50px', fontSize: 20 }}>An End-to-End Secure Messaging Application which ensures that your data is
                     Encrypted and and is not altered by any third party.</p>
+                <div style={mystyle}>
 
-                {
-                    SenderList.map((item, index) => (
-                        <div key={index} style={mystyle}>
-                            <Card sx={{ maxWidth: 345 }}>
-                                <CardContent>
-                                    <Typography gutterBottom variant="body" component="div">
-                                        <TextField label='Hash' style={{ height: '20px' }} value={item.currentHash}></TextField>
-                                    </Typography>
-                                    <br></br>
-                                    <br></br>
-                                    <Typography gutterBottom variant="body" component="div">
-                                        <TextField label='PrevHash' style={{ height: '20px' }} value={item.prevHash}></TextField>
-                                    </Typography>
-                                    <br></br>
-                                    <br></br>
-                                    <Typography gutterBottom variant="body" component="div">
-                                        <TextField label='SenderAddress' style={{ height: '20px' }} value={item.sender}></TextField>
-                                    </Typography>
-                                    <br></br>
-                                    <br></br>
-                                    <Typography gutterBottom variant="body" component="div">
-                                        <TextField label='RecvAddress' style={{ height: '20px' }} value={item.recv}></TextField>
-                                    </Typography>
-                                    <br></br>
-                                    <br></br>
-                                    <Typography gutterBottom variant="body" component="div">
-                                        <TextField label='TimeStamp' placeholder='PrevHash' style={{ height: '20px' }} value={item.timeStamp}></TextField>
-                                    </Typography>
-                                    <br></br>
-                                    <br></br>
-                                    <Typography gutterBottom variant="body" component="div">
-                                        <TextField label='SenderSignature' placeholder='PrevHash' style={{ height: '20px' }} value={item.SenderSignature}></TextField>
-                                    </Typography>
-                                    <br></br>
-                                    <br></br>
-                                </CardContent>
+                    {
+                        SenderList.map((item, index) => (
+                            <div key={index}>
+                                <Card sx={{ maxWidth: 345 }} style={{margin:"5%"}}>
+                                    <CardContent>
+                                        <Typography gutterBottom variant="body" component="div">
+                                            <TextField label='Hash' style={{ height: '20px' }} value={item.currentHash}></TextField>
+                                        </Typography>
+                                        <br></br>
+                                        <br></br>
+                                        <Typography gutterBottom variant="body" component="div">
+                                            <TextField label='PrevHash' style={{ height: '20px' }} value={item.prevHash}></TextField>
+                                        </Typography>
+                                        <br></br>
+                                        <br></br>
+                                        <Typography gutterBottom variant="body" component="div">
+                                            <TextField label='SenderAddress' style={{ height: '20px' }} value={item.sender}></TextField>
+                                        </Typography>
+                                        <br></br>
+                                        <br></br>
+                                        <Typography gutterBottom variant="body" component="div">
+                                            <TextField label='RecvAddress' style={{ height: '20px' }} value={item.recv}></TextField>
+                                        </Typography>
+                                        <br></br>
+                                        <br></br>
+                                        <Typography gutterBottom variant="body" component="div">
+                                            <TextField label='TimeStamp' placeholder='PrevHash' style={{ height: '20px' }} value={item.timeStamp}></TextField>
+                                        </Typography>
+                                        <br></br>
+                                        <br></br>
+                                        <Typography gutterBottom variant="body" component="div">
+                                            <TextField label='SenderSignature' placeholder='PrevHash' style={{ height: '20px' }} value={item.SenderSignature}></TextField>
+                                        </Typography>
+                                        <br></br>
+                                        <br></br>
+                                    </CardContent>
 
-                            </Card>
-                        </div>
-                    ))
+                                </Card>
+                            </div>
+                        ))
 
-                }
+                    }
+                </div>
             </div>
         </div>
     );
