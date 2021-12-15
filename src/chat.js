@@ -67,40 +67,7 @@ function Chat(props) {
 
     //   console.log(pid)
 
-    const showSent = () => {
-        console.log("Show Sent is called", localStorage.getItem('pid'))
-        // console.log(process.env.REACT_APP_TEST)
-        var myHeaders = new Headers();
-        myHeaders.append("Content-Type", "application/json");
-
-        var raw = JSON.stringify({
-            "UserAddress": localStorage.getItem('pid')
-        });
-
-        var requestOptions = {
-            method: 'POST',
-            headers: myHeaders,
-            body: raw,
-            redirect: 'follow'
-        };
-
-        fetch("http://localhost:4000/getSentMsg", requestOptions)
-            .then(response => response.json())
-            .then(result => {
-                console.log(result.Messages.MessageList)
-                setSenderList(result.Messages.MessageList);
-                //   if (result.AuthenticationStatus=="Verified"){
-                //     //<Link to="chat"></Link>
-                //     // navigate(`/chat/${publicKey}`)
-                //       console.log("1111")
-                //      window.location.href = `http://localhost:3000/chat`;
-
-                //   }
-            })
-            .catch(error => console.log('error', error));
-
-
-    }
+    
 
 
 
@@ -204,7 +171,9 @@ function Chat(props) {
                             Logged In
                         </Typography>
                         <br></br>
-                        <Button variant="contained" style={{ marginLeft: '50px', paddingBottom: '15px' }} onClick={showSent}>Show Sent Messages</Button>
+                        <Link to="/showsent">
+                        <Button variant="contained" style={{ marginLeft: '50px', paddingBottom: '15px' }} >Show Sent Messages</Button>
+                        </Link>
                         <br />
                         <br />
                         <Button variant="contained" style={{ marginLeft: '50px', paddingBottom: '15px' }} onClick={showGet}>Show Messages Received</Button>

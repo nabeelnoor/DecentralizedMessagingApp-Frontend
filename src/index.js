@@ -12,6 +12,7 @@ import {createStore,combineReducers} from 'redux'
 import allReducers from './reducers'
 import { Provider } from 'react-redux';
 import Test from './test';
+import ShowSent from './ShowSent';
 const store=createStore(allReducers);
 
 const history = createBrowserHistory({basename : `${process.env.PUBLIC_URL}`});
@@ -31,6 +32,7 @@ class App extends React.Component {
         <Route path="/" caseSensitive={false} element={<Main />} />
         <Route path="chat" caseSensitive={false} element={<Chat />} />
         <Route path="test" caseSensitive={false} element={<Test />} />
+        <Route path="showsent" caseSensitive={false} element={<ShowSent />} />
       </Routes>
     </Router>
       )  
