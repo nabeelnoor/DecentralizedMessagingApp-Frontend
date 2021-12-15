@@ -65,10 +65,14 @@ function ShowSent(props) {
     const mystyle = {
         display: "flex",
         flexDirection: "row",
-        justifyContent:"flex-start",
+        justifyContent: "flex-start",
 
 
     };
+
+    const doSome = (val) => {
+        navigator.clipboard.writeText(val)
+    }
     return (
         <div>
             <Link to="/" activeClassName="active"><Button variant="contained">Back</Button></Link>
@@ -84,35 +88,59 @@ function ShowSent(props) {
                     {
                         SenderList.map((item, index) => (
                             <div key={index}>
-                                <Card sx={{ maxWidth: 345 }} style={{margin:"5%"}}>
+                                <Card sx={{ maxWidth: 345 }} style={{ margin: "5%" }}>
                                     <CardContent>
-                                        <Typography gutterBottom variant="body" component="div">
+                                        <Typography gutterBottom variant="body" component="div" style={{ display: "flex", flexDirection: "row" }}>
                                             <TextField label='Hash' style={{ height: '20px' }} value={item.currentHash}></TextField>
+                                            <ClipboardIcon
+                                                size={20}
+                                                style={style1} onClick={() => doSome(item.currentHash)}
+                                            />
                                         </Typography>
                                         <br></br>
                                         <br></br>
-                                        <Typography gutterBottom variant="body" component="div">
+                                        <Typography gutterBottom variant="body" component="div" style={{ display: "flex", flexDirection: "row" }}>
                                             <TextField label='PrevHash' style={{ height: '20px' }} value={item.prevHash}></TextField>
+                                            <ClipboardIcon
+                                                size={20}
+                                                style={style1} onClick={() => doSome(item.prevHash)}
+                                            />
                                         </Typography>
                                         <br></br>
                                         <br></br>
-                                        <Typography gutterBottom variant="body" component="div">
+                                        <Typography gutterBottom variant="body" component="div" style={{ display: "flex", flexDirection: "row" }}>
                                             <TextField label='SenderAddress' style={{ height: '20px' }} value={item.sender}></TextField>
+                                            <ClipboardIcon
+                                                size={20}
+                                                style={style1} onClick={() => doSome(item.sender)}
+                                            />
                                         </Typography>
                                         <br></br>
                                         <br></br>
-                                        <Typography gutterBottom variant="body" component="div">
+                                        <Typography gutterBottom variant="body" component="div" style={{ display: "flex", flexDirection: "row" }}>
                                             <TextField label='RecvAddress' style={{ height: '20px' }} value={item.recv}></TextField>
+                                            <ClipboardIcon
+                                                size={20}
+                                                style={style1} onClick={() => doSome(item.recv)}
+                                            />
                                         </Typography>
                                         <br></br>
                                         <br></br>
-                                        <Typography gutterBottom variant="body" component="div">
+                                        <Typography gutterBottom variant="body" component="div" style={{ display: "flex", flexDirection: "row" }}>
                                             <TextField label='TimeStamp' placeholder='PrevHash' style={{ height: '20px' }} value={item.timeStamp}></TextField>
+                                            <ClipboardIcon
+                                                size={20}
+                                                style={style1} onClick={() => doSome(item.timeStamp)}
+                                            />
                                         </Typography>
                                         <br></br>
                                         <br></br>
-                                        <Typography gutterBottom variant="body" component="div">
+                                        <Typography gutterBottom variant="body" component="div" style={{ display: "flex", flexDirection: "row" }}>
                                             <TextField label='SenderSignature' placeholder='PrevHash' style={{ height: '20px' }} value={item.SenderSignature}></TextField>
+                                            <ClipboardIcon
+                                                size={20}
+                                                style={style1} onClick={() => doSome(item.SenderSignature)}
+                                            />
                                         </Typography>
                                         <br></br>
                                         <br></br>

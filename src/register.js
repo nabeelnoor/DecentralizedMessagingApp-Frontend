@@ -218,10 +218,10 @@ fetch("http://localhost:4000/login", requestOptions)
                     /> */}
                   
                   
-                     <input type="text" value={privateKey} onChange={doSome2} id='targetPrivateKey' onClick={doSome} style={{height:'40px',marginLeft:'60px',marginBottom:'10px'}} />
+                     <input type="text" value={privateKey}  id='targetPrivateKey'  style={{height:'40px',marginLeft:'60px',marginBottom:'10px'}} />
                          <ClipboardIcon
                         size={20}
-                        style={style1}
+                        style={style1} onClick={doSome}
                         />
                         
 
