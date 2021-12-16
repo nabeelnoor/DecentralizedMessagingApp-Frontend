@@ -15,8 +15,8 @@ import { useEffect, useState } from 'react';
 import ClipboardIcon from 'react-clipboard-icon'
 import { createBrowserHistory } from 'history';
 import Cookies from 'universal-cookie'
-
-
+import Popup from 'react-popup';
+import "./App.css"
 const history = createBrowserHistory({ basename: `${process.env.PUBLIC_URL}` });
 
 
@@ -25,6 +25,7 @@ const history = createBrowserHistory({ basename: `${process.env.PUBLIC_URL}` });
 
 
 const style1 = { fill: 'grey', marginLeft: '10px' }
+// const popStyle = { color:'white',background:'white' }
 
 function ShowSent(props) {
     const [SenderList, setSenderList] = useState([]);
@@ -70,11 +71,17 @@ function ShowSent(props) {
 
     };
 
+    const contentStyle = { background: '#000' };
+const overlayStyle = { background: 'rgba(0,0,0,0.5)' };
+
     const doSome = (val) => {
         navigator.clipboard.writeText(val)
+        Popup.alert('Text has been copied');
+        
     }
     return (
         <div>
+            <Popup></Popup>
             <Link to="/" activeClassName="active"><Button variant="contained">Back</Button></Link>
             <BackgroundSlider
                 images={[background, background1, background2]}
