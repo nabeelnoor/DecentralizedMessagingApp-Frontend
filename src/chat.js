@@ -176,42 +176,16 @@ function Chat(props) {
                         </Link>
                         <br />
                         <br />
-                        <Button variant="contained" style={{ marginLeft: '50px', paddingBottom: '15px' }} onClick={showGet}>Show Messages Received</Button>
+                        <Link to="/showRecv">
+                        <Button variant="contained" style={{ marginLeft: '50px', paddingBottom: '15px' }} >Show Recv Messages</Button>
+                        </Link>
+                        {/* <Button variant="contained" style={{ marginLeft: '50px', paddingBottom: '15px' }} onClick={showGet}>Show Messages Received</Button> */}
                     </CardContent>
 
 
                 </Card>
 
-                <Card sx={{ maxWidth: 345, marginLeft: '350px' }}>
-                    <CardContent>
-                        <Typography gutterBottom variant="h5" component="div">
-                            Display Sent Messages
-                        </Typography>
-
-                        {
-                            SenderList.map((item, index) => (
-                                <div key={index}>
-                                    <span><h5>DataHash: {item.DataHash}</h5></span>
-                                    <br />
-                                    <span><h5>CurrentHash: {item.currentHash}</h5></span>
-                                    <br />
-                                    <span><h5>PrevHash:{item.prevHash}</h5></span>
-                                    <br />
-                                    <span><h5>Sender:{item.sender}</h5></span>
-                                    <br />
-                                    <span><h5>Receiver:{item.recv}</h5></span>
-                                    <br />
-                                    <span><h5>TimeStamp: {item.timeStamp}</h5></span>
-                                    <br />
-                                    <span><h5>SenderSignature: {item.SenderSignature}</h5></span>
-                                </div>
-                            ))
-
-                        }
-                    </CardContent>
-
-
-                </Card>
+                
                 <Card sx={{ maxWidth: 345, marginLeft: '750px' }}>
                     <CardContent>
                         <Typography gutterBottom variant="h5" component="div">

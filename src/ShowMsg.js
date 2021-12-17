@@ -29,7 +29,7 @@ const history = createBrowserHistory({ basename: `${process.env.PUBLIC_URL}` });
 const style1 = { fill: 'grey', marginLeft: '10px' }
 // const popStyle = { color:'white',background:'white' }
 
-function ShowSent(props) {
+function ShowMsg(props) {
     const [SenderList, setSenderList] = useState([]);
 
     useEffect(() => {
@@ -49,7 +49,7 @@ function ShowSent(props) {
             redirect: 'follow'
         };
 
-        fetch("http://localhost:4000/getSentMsg", requestOptions)
+        fetch("http://localhost:4000/getRecvMsg", requestOptions)
             .then(response => response.json())
             .then(result => {
                 console.log(result.Messages.MessageList)
@@ -101,7 +101,7 @@ function ShowSent(props) {
                                     <CardContent>
                                         <Typography gutterBottom variant="body" component="div" style={{ display: "flex", flexDirection: "row" }}>
                                             <TextField label='Hash' style={{ height: '20px' }} value={item.currentHash}></TextField>
-                                            <Tooltip title="Copy Text" style={{ display: "flex", flexDirection: "column" ,justifyContent:"center" }}>
+                                            <Tooltip title="Copy Text" style={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
                                                 <button onClick={() => doSome(item.currentHash)}>
                                                     <ClipboardIcon
                                                         size={20}
@@ -113,7 +113,7 @@ function ShowSent(props) {
                                         <br></br>
                                         <Typography gutterBottom variant="body" component="div" style={{ display: "flex", flexDirection: "row" }}>
                                             <TextField label='PrevHash' style={{ height: '20px' }} value={item.prevHash}></TextField>
-                                            <Tooltip title="Copy Text" style={{ display: "flex", flexDirection: "column" ,justifyContent:"center" }}>
+                                            <Tooltip title="Copy Text" style={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
                                                 <button onClick={() => doSome(item.prevHash)}>
                                                     <ClipboardIcon
                                                         size={20} />
@@ -125,7 +125,7 @@ function ShowSent(props) {
                                         <br></br>
                                         <Typography gutterBottom variant="body" component="div" style={{ display: "flex", flexDirection: "row" }}>
                                             <TextField label='SenderAddress' style={{ height: '20px' }} value={item.sender}></TextField>
-                                            <Tooltip title="Copy Text" style={{ display: "flex", flexDirection: "column" ,justifyContent:"center" }}>
+                                            <Tooltip title="Copy Text" style={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
                                                 <button onClick={() => doSome(item.sender)}>
                                                     <ClipboardIcon
                                                         size={20}
@@ -138,11 +138,11 @@ function ShowSent(props) {
                                         <br></br>
                                         <Typography gutterBottom variant="body" component="div" style={{ display: "flex", flexDirection: "row" }}>
                                             <TextField label='RecvAddress' style={{ height: '20px' }} value={item.recv}></TextField>
-                                            <Tooltip title="Copy Text" style={{ display: "flex", flexDirection: "column" ,justifyContent:"center" }}> 
+                                            <Tooltip title="Copy Text" style={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
                                                 <button onClick={() => doSome(item.recv)}>
                                                     <ClipboardIcon
                                                         size={20}
-                                                         />
+                                                    />
                                                 </button>
                                             </Tooltip>
                                         </Typography>
@@ -150,7 +150,7 @@ function ShowSent(props) {
                                         <br></br>
                                         <Typography gutterBottom variant="body" component="div" style={{ display: "flex", flexDirection: "row" }}>
                                             <TextField label='TimeStamp' placeholder='PrevHash' style={{ height: '20px' }} value={item.timeStamp}></TextField>
-                                            <Tooltip title="Copy Text" style={{ display: "flex", flexDirection: "column" ,justifyContent:"center" }}>
+                                            <Tooltip title="Copy Text" style={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
                                                 <button onClick={() => doSome(item.timeStamp)}>
                                                     <ClipboardIcon
                                                         size={20} />
@@ -161,7 +161,7 @@ function ShowSent(props) {
                                         <br></br>
                                         <Typography gutterBottom variant="body" component="div" style={{ display: "flex", flexDirection: "row" }}>
                                             <TextField label='SenderSignature' placeholder='PrevHash' style={{ height: '20px' }} value={item.SenderSignature}></TextField>
-                                            <Tooltip title="Copy Text" style={{ display: "flex", flexDirection: "column" ,justifyContent:"center" }}>
+                                            <Tooltip title="Copy Text" style={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
                                                 <button onClick={() => doSome(item.SenderSignature)}>
                                                     <ClipboardIcon
                                                         size={20} />
@@ -170,6 +170,9 @@ function ShowSent(props) {
                                         </Typography>
                                         <br></br>
                                         <br></br>
+                                        <Link to="/showMSg">
+                                            <Button variant="contained"  >Show Messages</Button>
+                                        </Link>
                                     </CardContent>
 
                                 </Card>
@@ -183,4 +186,4 @@ function ShowSent(props) {
     );
 }
 
-export default ShowSent;
+export default ShowMsg;
