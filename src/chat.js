@@ -15,6 +15,8 @@ import { useEffect, useState } from 'react';
 import ClipboardIcon from 'react-clipboard-icon'
 import { createBrowserHistory } from 'history';
 import Cookies from 'universal-cookie'
+import { Navbar, Nav, Container } from 'react-bootstrap'
+
 
 
 const history = createBrowserHistory({ basename: `${process.env.PUBLIC_URL}` });
@@ -59,7 +61,7 @@ function Chat(props) {
     const [Recv, setRecv] = useState('');
     const [RecvAddress, setRecvAdd] = useState('');
     const [SenderList, setSenderList] = useState([]);
-    const [RecvList,setRecvList]= useState([]);
+    const [RecvList, setRecvList] = useState([]);
     // console.log(str)
 
     //     const location = useLocation()
@@ -67,45 +69,7 @@ function Chat(props) {
 
     //   console.log(pid)
 
-    
 
-
-
-
-    const showGet = () => {
-        // console.log(process.env.REACT_APP_TEST)
-        var myHeaders = new Headers();
-        myHeaders.append("Content-Type", "application/json");
-
-        var raw = JSON.stringify({
-            "UserAddress": pid
-        });
-
-        var requestOptions = {
-            method: 'POST',
-            headers: myHeaders,
-            body: raw,
-            redirect: 'follow'
-        };
-
-        fetch("http://localhost:4000/getRecvMsg", requestOptions)
-            .then(response => response.json())
-            .then(result => {
-                console.log("Test:\n",localStorage.getItem('pid'))
-                console.log(result)
-                setRecvList(result.Messages.MessageList);
-                //   if (result.AuthenticationStatus=="Verified"){
-                //     //<Link to="chat"></Link>
-                //     // navigate(`/chat/${publicKey}`)
-                //       console.log("1111")
-                //      window.location.href = `http://localhost:3000/chat`;
-
-                //   }
-            })
-            .catch(error => console.log('error', error));
-
-
-    }
 
 
 
@@ -118,7 +82,7 @@ function Chat(props) {
             "Content": content,
             "Sender": Sender,
             "Recv": Recv,
-            "SenderAddress":  localStorage.getItem('pid'),
+            "SenderAddress": localStorage.getItem('pid'),
             "RecvAddress": RecvAddress
         });
 
@@ -132,6 +96,9 @@ function Chat(props) {
         fetch("http://localhost:4000/storeMsg", requestOptions)
             .then(response => response.json())
             .then(result => {
+                setContent("")
+                setSender("")
+                setRecv("")
                 console.log(result)
                 console.log(raw)
                 //   if (result.AuthenticationStatus=="Verified"){
@@ -148,15 +115,10 @@ function Chat(props) {
     }
 
 
-    const doSome = () => {
-        navigator.clipboard.writeText(document.getElementById("targetPrivateKey").value)
-        // e.preventDefault();
-        // console.log(e)
-    }
 
     return (
         <div>
-            
+          
             <Link to="/" activeClassName="active"><Button variant="contained">Back</Button></Link>
             <BackgroundSlider
                 images={[background, background1, background2]}
@@ -173,12 +135,12 @@ function Chat(props) {
                         </Typography>
                         <br></br>
                         <Link to="/showsent">
-                        <Button variant="contained" style={{ marginLeft: '50px', paddingBottom: '15px' }} >Show Sent Messages</Button>
+                            <Button variant="contained" style={{ marginLeft: '50px', paddingBottom: '15px' }} >Show Sent Messages</Button>
                         </Link>
                         <br />
                         <br />
                         <Link to="/showRecv">
-                        <Button variant="contained" style={{ marginLeft: '50px', paddingBottom: '15px' }} >Show Recv Messages</Button>
+                            <Button variant="contained" style={{ marginLeft: '50px', paddingBottom: '15px' }} >Show Recv Messages</Button>
                         </Link>
                         {/* <Button variant="contained" style={{ marginLeft: '50px', paddingBottom: '15px' }} onClick={showGet}>Show Messages Received</Button> */}
                     </CardContent>
