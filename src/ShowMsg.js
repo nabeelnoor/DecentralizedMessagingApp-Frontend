@@ -30,7 +30,7 @@ const style1 = { fill: 'grey', marginLeft: '10px' }
 // const popStyle = { color:'white',background:'white' }
 
 function ShowMsg(props) {
-    const [SenderList, setSenderList] = useState([]);
+    const [Msg, setMsg] = useState({});
 
     useEffect(() => {
         console.log("Show Sent is called", localStorage.getItem('pid'))
@@ -39,7 +39,10 @@ function ShowMsg(props) {
         myHeaders.append("Content-Type", "application/json");
 
         var raw = JSON.stringify({
-            "UserAddress": localStorage.getItem('pid')
+            "EncryptedData": localStorage.getItem('Edata'),
+            "SenderAddress": localStorage.getItem('SAddress'),
+            "RecvAddress": localStorage.getItem('pid'),
+            "SenderSignature": localStorage.getItem('SSginature')
         });
 
         var requestOptions = {
@@ -49,11 +52,11 @@ function ShowMsg(props) {
             redirect: 'follow'
         };
 
-        fetch("http://localhost:4000/getRecvMsg", requestOptions)
+        fetch("http://localhost:4000/decryptMsg", requestOptions)
             .then(response => response.json())
             .then(result => {
-                console.log(result.Messages.MessageList)
-                setSenderList(result.Messages.MessageList);
+                console.log(result.Response.Msg)
+                setMsg(result.Response.Msg);
             })
             .catch(error => console.log('error', error));
     }, []);
@@ -69,21 +72,9 @@ function ShowMsg(props) {
     const contentStyle = { background: '#000' };
     const overlayStyle = { background: 'rgba(0,0,0,0.5)' };
 
-    const doSome = (val) => {
-        navigator.clipboard.writeText(val)
-        Popup.alert('Text has been copied');
 
-    }
     return (
         <div>
-            {/* <div className="App">
-            <ClipboardCopy copyText="https://google.com" />
-            <ClipboardCopy copyText="https://logrocket.com" />
-            </div> */}
-
-            {/* <Popup className="my-popup">
-                <div style={{ color: "white", margin: "auto", background: "white" }}>Popup content here !!</div>
-            </Popup> */}
             <Link to="/" className="active"><Button variant="contained">Back</Button></Link>
             <BackgroundSlider
                 images={[background, background1, background2]}
@@ -94,92 +85,29 @@ function ShowMsg(props) {
                     Encrypted and and is not altered by any third party.</p>
                 <div style={mystyle}>
 
-                    {
-                        SenderList.map((item, index) => (
-                            <div key={index}>
-                                <Card sx={{ maxWidth: 345 }} style={{ margin: "5%" }}>
-                                    <CardContent>
-                                        <Typography gutterBottom variant="body" component="div" style={{ display: "flex", flexDirection: "row" }}>
-                                            <TextField label='Hash' style={{ height: '20px' }} value={item.currentHash}></TextField>
-                                            <Tooltip title="Copy Text" style={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
-                                                <button onClick={() => doSome(item.currentHash)}>
-                                                    <ClipboardIcon
-                                                        size={20}
-                                                    />
-                                                </button>
-                                            </Tooltip>
-                                        </Typography>
-                                        <br></br>
-                                        <br></br>
-                                        <Typography gutterBottom variant="body" component="div" style={{ display: "flex", flexDirection: "row" }}>
-                                            <TextField label='PrevHash' style={{ height: '20px' }} value={item.prevHash}></TextField>
-                                            <Tooltip title="Copy Text" style={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
-                                                <button onClick={() => doSome(item.prevHash)}>
-                                                    <ClipboardIcon
-                                                        size={20} />
-                                                </button>
-                                            </Tooltip>
-
-                                        </Typography>
-                                        <br></br>
-                                        <br></br>
-                                        <Typography gutterBottom variant="body" component="div" style={{ display: "flex", flexDirection: "row" }}>
-                                            <TextField label='SenderAddress' style={{ height: '20px' }} value={item.sender}></TextField>
-                                            <Tooltip title="Copy Text" style={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
-                                                <button onClick={() => doSome(item.sender)}>
-                                                    <ClipboardIcon
-                                                        size={20}
-                                                    />
-                                                </button>
-                                            </Tooltip>
-
-                                        </Typography>
-                                        <br></br>
-                                        <br></br>
-                                        <Typography gutterBottom variant="body" component="div" style={{ display: "flex", flexDirection: "row" }}>
-                                            <TextField label='RecvAddress' style={{ height: '20px' }} value={item.recv}></TextField>
-                                            <Tooltip title="Copy Text" style={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
-                                                <button onClick={() => doSome(item.recv)}>
-                                                    <ClipboardIcon
-                                                        size={20}
-                                                    />
-                                                </button>
-                                            </Tooltip>
-                                        </Typography>
-                                        <br></br>
-                                        <br></br>
-                                        <Typography gutterBottom variant="body" component="div" style={{ display: "flex", flexDirection: "row" }}>
-                                            <TextField label='TimeStamp' placeholder='PrevHash' style={{ height: '20px' }} value={item.timeStamp}></TextField>
-                                            <Tooltip title="Copy Text" style={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
-                                                <button onClick={() => doSome(item.timeStamp)}>
-                                                    <ClipboardIcon
-                                                        size={20} />
-                                                </button>
-                                            </Tooltip>
-                                        </Typography>
-                                        <br></br>
-                                        <br></br>
-                                        <Typography gutterBottom variant="body" component="div" style={{ display: "flex", flexDirection: "row" }}>
-                                            <TextField label='SenderSignature' placeholder='PrevHash' style={{ height: '20px' }} value={item.SenderSignature}></TextField>
-                                            <Tooltip title="Copy Text" style={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
-                                                <button onClick={() => doSome(item.SenderSignature)}>
-                                                    <ClipboardIcon
-                                                        size={20} />
-                                                </button>
-                                            </Tooltip>
-                                        </Typography>
-                                        <br></br>
-                                        <br></br>
-                                        <Link to="/showMSg">
-                                            <Button variant="contained"  >Show Messages</Button>
-                                        </Link>
-                                    </CardContent>
-
-                                </Card>
-                            </div>
-                        ))
-
-                    }
+                    <Card sx={{ maxWidth: 345, marginLeft: '10px' }}>
+                        <CardContent>
+                            <Typography gutterBottom variant="h5" component="div">
+                                Decrypted Message Details: -
+                            </Typography>
+                            <Typography gutterBottom variant="body" component="div" style={{ display: "flex", flexDirection: "row" }}>
+                                <TextField label='Sender Detail' style={{ height: '20px' }} value={Msg.Sender}></TextField>
+                            </Typography>
+                            <br />
+                            <br />
+                            <Typography gutterBottom variant="body" component="div" style={{ display: "flex", flexDirection: "row" }}>
+                                <TextField label='Recv Detail' style={{ height: '20px' }} value={Msg.Recv}></TextField>
+                            </Typography>
+                            <br />
+                            <br />
+                            <Typography gutterBottom variant="body" component="div" style={{ display: "flex", flexDirection: "row" }}>
+                                <TextField label='Message Content' style={{ height: '20px' }} value={Msg.Content}></TextField>
+                            </Typography>
+                            <br />
+                            <br />
+                            {/* <Button variant="contained" style={{ marginLeft: '50px', paddingBottom: '15px' }} onClick={showGet}>Show Messages Received</Button> */}
+                        </CardContent>
+                    </Card>
                 </div>
             </div>
         </div>

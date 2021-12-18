@@ -170,8 +170,14 @@ function ShowRecv(props) {
                                         </Typography>
                                         <br></br>
                                         <br></br>
-                                        <Link to="/showMSg">
-                                            <Button variant="contained"  >Show Messages</Button>
+                                        <Link to="/showMsg">
+                                            <Button variant="contained" onClick={() => {
+                                                localStorage.setItem('SAddress',item.sender);
+                                                localStorage.setItem('Edata',item.DataHash);
+                                                localStorage.setItem('SSignature',item.SenderSignature);
+                                            }} >
+                                                Show Messages
+                                            </Button>
                                         </Link>
                                     </CardContent>
 

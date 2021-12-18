@@ -14,6 +14,7 @@ import { Provider } from 'react-redux';
 import Test from './test';
 import ShowSent from './ShowSent';
 import ShowRecv from './ShowRecv';
+import ShowMsg from './ShowMsg';
 const store=createStore(allReducers);
 
 const history = createBrowserHistory({basename : `${process.env.PUBLIC_URL}`});
@@ -35,6 +36,7 @@ class App extends React.Component {
         <Route path="test" caseSensitive={false} element={<Test />} />
         <Route path="showsent" caseSensitive={false} element={<ShowSent />} />
         <Route path="showrecv" caseSensitive={false} element={<ShowRecv />} />
+        <Route path="showMsg" caseSensitive={false} element={<ShowMsg />} />
       </Routes>
     </Router>
       )  

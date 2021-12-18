@@ -156,6 +156,7 @@ function Chat(props) {
 
     return (
         <div>
+            
             <Link to="/" activeClassName="active"><Button variant="contained">Back</Button></Link>
             <BackgroundSlider
                 images={[background, background1, background2]}
@@ -185,36 +186,6 @@ function Chat(props) {
 
                 </Card>
 
-                
-                <Card sx={{ maxWidth: 345, marginLeft: '750px' }}>
-                    <CardContent>
-                        <Typography gutterBottom variant="h5" component="div">
-                            Display Received Messages
-                        </Typography>
-                        {
-                            RecvList.map((item, index) => (
-                                <div key={index}>
-                                    <span><h5>DataHash: {item.DataHash}</h5></span>
-                                    <br />
-                                    <span><h5>CurrentHash: {item.currentHash}</h5></span>
-                                    <br />
-                                    <span><h5>PrevHash:{item.prevHash}</h5></span>
-                                    <br />
-                                    <span><h5>Sender:{item.sender}</h5></span>
-                                    <br />
-                                    <span><h5>Receiver:{item.recv}</h5></span>
-                                    <br />
-                                    <span><h5>TimeStamp: {item.timeStamp}</h5></span>
-                                    <br />
-                                    <span><h5>SenderSignature: {item.SenderSignature}</h5></span>
-                                </div>
-                            ))
-
-                        }
-                    </CardContent>
-
-
-                </Card>
                 <Card sx={{ maxWidth: 345, marginLeft: '1100px' }}>
                     <CardContent>
                         <Typography gutterBottom variant="h5" component="div">
